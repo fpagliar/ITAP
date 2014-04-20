@@ -3,10 +3,9 @@ package model;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-
 public interface Image {
 
-    /**
+	/**
 	 * Color channels
 	 */
 	public static enum ColorChannel {
@@ -56,12 +55,15 @@ public interface Image {
 	 * @return BMP, PGM, PPM or RAW
 	 */
 	public ImageFormat getImageFormat();
-	
+
 	/**
 	 * Gets the buffered image represented by this instance.
+	 * 
 	 * @return the buffered image.
 	 */
 	public BufferedImage getImage();
-	
+
 	public Color getRGBPixel(int x, int y);
+
+	public void setPixel(int x, int y, Color color);
 }

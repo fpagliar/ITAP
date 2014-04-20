@@ -3,6 +3,7 @@ package gui;
 import javax.swing.JMenuBar;
 
 import menu.FileMenu;
+import menu.item.MouseCoordinatesLabel;
 import menu.item.SelectPanelMenuItem;
 
 public class MainMenu extends JMenuBar {
@@ -14,5 +15,6 @@ public class MainMenu extends JMenuBar {
 		this.add(new FileMenu(window));
 		this.add(new SelectPanelMenuItem(window, panel1));
 		this.add(new SelectPanelMenuItem(window, panel2));
+		this.add(new MouseCoordinatesLabel(panel1, panel2));
 	}
 }
