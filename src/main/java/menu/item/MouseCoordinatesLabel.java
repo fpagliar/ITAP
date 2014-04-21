@@ -32,7 +32,6 @@ public class MouseCoordinatesLabel extends JLabel implements
 
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseMoved(MouseEvent e) {
