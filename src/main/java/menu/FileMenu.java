@@ -4,8 +4,9 @@ import gui.Window;
 
 import javax.swing.JMenu;
 
-import menu.item.CopyImageSelection;
+import menu.item.CopyImageSelectionMenuItem;
 import menu.item.LoadImageMenuItem;
+import menu.item.PasteImageSelectionMenuItem;
 import menu.item.SaveImageMenuItem;
 
 public class FileMenu extends JMenu {
@@ -18,7 +19,8 @@ public class FileMenu extends JMenu {
 
 		this.add(new LoadImageMenuItem(window));
 		this.add(new SaveImageMenuItem(window));
-		this.add(new CopyImageSelection(window));
+		this.add(new CopyImageSelectionMenuItem(window));
+		this.add(new PasteImageSelectionMenuItem(window));
 	}
 
 }

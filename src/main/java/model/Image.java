@@ -1,6 +1,7 @@
 package model;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public interface Image {
@@ -66,4 +67,8 @@ public interface Image {
 	public Color getRGBPixel(int x, int y);
 
 	public void setPixel(int x, int y, Color color);
+	
+	public Image getImagePart(Rectangle selection);
+
+	public void pasteImagePart(BufferedImage other, Rectangle selection);
 }

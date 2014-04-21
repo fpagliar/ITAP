@@ -16,32 +16,23 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import model.Image;
-
 /**
  * IMPORTANT: Easily made, not thread safe because it is using class variables. Only use one at a time!
- * @author Andrew Thompson ->
- *         http://stackoverflow.com/questions/11006496/select-
- *         an-area-to-capture-using-the-mouse -- Small modifications made by me.
+ * @author using parts of the code from ImageSelectionCapturer.
  */
-public class ImageSelectionCapturer {
+public class ImageSelectionPaster {
 
 	//TODO: use singleton?
-	private Rectangle captureRect;
-	private static Rectangle lastSelection;
-	private static Image image;
-
-	public ImageSelectionCapturer(final Image image) {
-		ImageSelectionCapturer.image = image;
-
-		final BufferedImage bufferedImage = image.getImage();
-		final BufferedImage screenCopy = new BufferedImage(bufferedImage.getWidth(),
-				bufferedImage.getHeight(), bufferedImage.getType());
+	private static Rectangle lastSelection;	
+	
+	public ImageSelectionPaster(final BufferedImage image, final Rectangle rectangle, final BufferedImage rectangleImage) {
+		final BufferedImage screenCopy = new BufferedImage(image.getWidth(),
+				image.getHeight(), image.getType());
 		final JLabel screenLabel = new JLabel(new ImageIcon(screenCopy));
 		JScrollPane screenScroll = new JScrollPane(screenLabel);
 
 		screenScroll.setPreferredSize(new Dimension(
-				(int) (bufferedImage.getWidth()), (int) (bufferedImage.getHeight())));
+				(int) (image.getWidth()), (int) (image.getHeight())));
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(screenScroll, BorderLayout.CENTER);
@@ -49,53 +40,43 @@ public class ImageSelectionCapturer {
 		final JLabel selectionLabel = new JLabel("Select the required area");
 		panel.add(selectionLabel, BorderLayout.SOUTH);
 
-		repaint(bufferedImage, screenCopy);
+		repaint(image, screenCopy, null);
 		screenLabel.repaint();
 
 		screenLabel.addMouseMotionListener(new MouseMotionAdapter() {
 
-			Point start = new Point();
-
 			@Override
 			public void mouseMoved(MouseEvent me) {
-				start = me.getPoint();
-				repaint(bufferedImage, screenCopy);
-				selectionLabel.setText("Start Point: " + start);
-				screenLabel.repaint();
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent me) {
 				Point end = me.getPoint();
-				captureRect = new Rectangle(start, new Dimension(end.x
-						- start.x, end.y - start.y));
-				repaint(bufferedImage, screenCopy);
+				Point center = new Point(end.x - (rectangle.width/2), end.y - (rectangle.height/2));
+				//TODO: recheck this tomorrow, not working.
+				//TODO: bug, closing this window, the paste is done the same
+				if(end.x + rectangle.width > image.getWidth() || end.y + rectangle.height > image.getHeight() )
+					return;
+				lastSelection = new Rectangle(center, new Dimension(rectangle.width, rectangle.height));
+				repaint(image, screenCopy, rectangleImage);
 				screenLabel.repaint();
-				selectionLabel.setText("Rectangle: " + captureRect);
 			}
 		});
 
 		JOptionPane.showMessageDialog(null, panel);
-		lastSelection = captureRect;
 	}
 
-	public void repaint(BufferedImage orig, BufferedImage copy) {
+	public void repaint(BufferedImage orig, BufferedImage copy, BufferedImage rectangleImage) {
 		Graphics2D g = copy.createGraphics();
 		g.drawImage(orig, 0, 0, null);
-		if (captureRect != null) {
-			g.setColor(Color.RED);
-			g.draw(captureRect);
-			g.setColor(new Color(255, 255, 255, 150));
-			g.fill(captureRect);
+		if (lastSelection != null) {
+			g.drawImage(rectangleImage, lastSelection.x, lastSelection.y, lastSelection.width, lastSelection.height, null);
 		}
 		g.dispose();
 	}
+	
 
 	public static Rectangle getLastSelection() {
 		return lastSelection;
-	}
-	
-	public static Image getImage(){
-		return image;
 	}
 }
