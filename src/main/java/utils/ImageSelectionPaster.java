@@ -47,6 +47,8 @@ public class ImageSelectionPaster {
 
 		repaint(image, screenCopy, null);
 		screenLabel.repaint();
+		final JLabel selectionLabel = new JLabel("Select the required area");
+		panel.add(selectionLabel, BorderLayout.SOUTH);
 
 		screenLabel.addMouseMotionListener(new MouseMotionAdapter() {
 
@@ -56,15 +58,25 @@ public class ImageSelectionPaster {
 
 			@Override
 			public void mouseDragged(MouseEvent me) {
-				Point end = me.getPoint();
-				Point center = new Point(end.x - (rectangle.width / 2), end.y
-						- (rectangle.height / 2));
-				// TODO: recheck this tomorrow, not working.
-				// TODO: bug, closing this window, the paste is done the same
-				if (end.x + rectangle.width > image.getWidth()
-						|| end.y + rectangle.height > image.getHeight())
-					return;
-				lastSelection = new Rectangle(center, new Dimension(
+				// me is going to carry the center of the rectangle, cause the
+				// rectangle is built as if me was the center
+				// by using the variable edge calculated that way
+
+				Point edge = new Point(me.getPoint().x - (rectangle.width / 2),
+						me.getPoint().y - (rectangle.height / 2));
+
+				// --- This checks maintain the rectangle inside the image
+				if (edge.x < 0)
+					edge.x = 0;
+				if (edge.x + rectangle.width > image.getWidth())
+					edge.x = image.getWidth() - rectangle.width;
+				if (edge.y < 0)
+					edge.y = 0;
+				if (edge.y + rectangle.height > image.getHeight())
+					edge.y = image.getHeight() - rectangle.height;
+				// ---
+
+				lastSelection = new Rectangle(edge, new Dimension(
 						rectangle.width, rectangle.height));
 				repaint(image, screenCopy, rectangleImage);
 				screenLabel.repaint();

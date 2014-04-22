@@ -112,12 +112,16 @@ public class ColorImage implements Image, Cloneable {
 	public void pasteImagePart(BufferedImage other, Rectangle selection) {
 		// Point check
 		if (selection.x < 0 || selection.x > image.getWidth()
-				|| selection.y < 0 || selection.y > image.getHeight())
+				|| selection.y < 0 || selection.y > image.getHeight()) {
 			new ErrorWindow("invalid location, out of bounds!");
+			return;
+		}
 		// Rectangle check
 		if (selection.x + selection.width > image.getWidth()
-				|| selection.y + selection.height > image.getHeight())
+				|| selection.y + selection.height > image.getHeight()) {
 			new ErrorWindow("invalid location rectangle gets out of bounds");
+			return;
+		}
 
 		// Gets the array of pixels in the image
 		int[] rgbData = other.getRGB(0, 0, selection.width, selection.height,

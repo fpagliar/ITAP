@@ -28,5 +28,4 @@ public class FileMenu extends JMenu {
 		this.add(new CreateCircleMenuItem(window));
 		this.add(new CalculateAverageColor(window));
 	}
-
 }

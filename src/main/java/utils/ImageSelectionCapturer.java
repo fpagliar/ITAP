@@ -60,7 +60,7 @@ public class ImageSelectionCapturer {
 			public void mouseMoved(MouseEvent me) {
 				start = me.getPoint();
 				repaint(bufferedImage, screenCopy);
-				selectionLabel.setText("Start Point: " + start);
+				selectionLabel.setText("Start X:" + start.x + " Y:" + start.y);
 				screenLabel.repaint();
 			}
 
@@ -71,7 +71,7 @@ public class ImageSelectionCapturer {
 						- start.x, end.y - start.y));
 				repaint(bufferedImage, screenCopy);
 				screenLabel.repaint();
-				selectionLabel.setText("Rectangle: " + captureRect);
+				selectionLabel.setText("Rectangle - Width: " + captureRect.width + " Height: " + captureRect.height);
 			}
 		});
 
