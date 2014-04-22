@@ -15,13 +15,14 @@ public class ColorImage implements Image, Cloneable {
 	private Channel blue;
 	private BufferedImage image;
 
-	private ColorImage(int height, int width, ImageFormat format, ImageType type) {
+	public ColorImage(int height, int width, ImageFormat format, ImageType type) {
 		// Initialize a channel for each RGB color
 		this.red = new Channel(width, height);
 		this.green = new Channel(width, height);
 		this.blue = new Channel(width, height);
 		this.format = format;
 		this.type = type;
+		this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 	}
 
 	public ColorImage(BufferedImage bufferedImage, ImageFormat format,
@@ -98,6 +99,7 @@ public class ColorImage implements Image, Cloneable {
 		red.setPixel(x, y, color.getRed());
 		green.setPixel(x, y, color.getGreen());
 		blue.setPixel(x, y, color.getBlue());
+		image.setRGB(x, y, color.getRGB());
 	}
 
 	public Image getImagePart(Rectangle selection) {
@@ -126,15 +128,20 @@ public class ColorImage implements Image, Cloneable {
 		// Loads the pixels in each one of the channels
 		for (int xpos = selection.x; xpos < selection.x + selection.width; xpos++) {
 			for (int ypos = selection.y; ypos < selection.y + selection.height; ypos++) {
-				//Changing from the image coordinates to the other's coordinates
-				colorRed = (rgbData[((ypos - selection.y) * selection.width) + (xpos - selection.x)] >> 16) & 0xFF;
-				colorGreen = (rgbData[((ypos - selection.y) * selection.width) + (xpos - selection.x)] >> 8) & 0xFF;
-				colorBlue = (rgbData[((ypos - selection.y) * selection.width) + (xpos - selection.x)]) & 0xFF;
+				// Changing from the image coordinates to the other's
+				// coordinates
+				colorRed = (rgbData[((ypos - selection.y) * selection.width)
+						+ (xpos - selection.x)] >> 16) & 0xFF;
+				colorGreen = (rgbData[((ypos - selection.y) * selection.width)
+						+ (xpos - selection.x)] >> 8) & 0xFF;
+				colorBlue = (rgbData[((ypos - selection.y) * selection.width)
+						+ (xpos - selection.x)]) & 0xFF;
 
 				red.setPixel(xpos, ypos, colorRed);
 				green.setPixel(xpos, ypos, colorGreen);
 				blue.setPixel(xpos, ypos, colorBlue);
-				image.setRGB(xpos, ypos, other.getRGB(xpos - selection.x, ypos- selection.y));
+				image.setRGB(xpos, ypos,
+						other.getRGB(xpos - selection.x, ypos - selection.y));
 			}
 		}
 	}
