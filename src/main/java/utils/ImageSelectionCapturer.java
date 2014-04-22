@@ -41,7 +41,7 @@ public class ImageSelectionCapturer {
 		JScrollPane screenScroll = new JScrollPane(screenLabel);
 
 		screenScroll.setPreferredSize(new Dimension(
-				(int) (bufferedImage.getWidth()), (int) (bufferedImage.getHeight())));
+				(int) (bufferedImage.getWidth() + 20), (int) (bufferedImage.getHeight() + 20)));
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(screenScroll, BorderLayout.CENTER);

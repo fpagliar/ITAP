@@ -29,9 +29,11 @@ public class PasteImageSelectionMenuItem extends JMenuItem {
 				Image original = ImageSelectionCapturer.getImage();
 				Image fraction = original.getImagePart(selection);
 				new ImageSelectionPaster(window.getFocusedPanel().getImage().getImage(), selection, fraction.getImage());
-				original.pasteImagePart(fraction.getImage(), ImageSelectionPaster.getLastSelection());
-				window.getFocusedPanel().setImage(original);
-				window.repaint();
+				if(ImageSelectionPaster.isConfirmed()){					
+					original.pasteImagePart(fraction.getImage(), ImageSelectionPaster.getLastSelection());
+					window.getFocusedPanel().setImage(original);
+					window.repaint();
+				}
 			}
 		});
 	}
