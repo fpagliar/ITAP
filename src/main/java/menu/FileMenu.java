@@ -5,6 +5,7 @@ import gui.Window;
 import javax.swing.JMenu;
 
 import menu.item.CopyImageSelectionMenuItem;
+import menu.item.CreateCircleMenuItem;
 import menu.item.CreateSquareMenuItem;
 import menu.item.LoadImageMenuItem;
 import menu.item.PasteImageSelectionMenuItem;
@@ -23,6 +24,7 @@ public class FileMenu extends JMenu {
 		this.add(new CopyImageSelectionMenuItem(window));
 		this.add(new PasteImageSelectionMenuItem(window));
 		this.add(new CreateSquareMenuItem(window));
+		this.add(new CreateCircleMenuItem(window));
 	}
 
 }
