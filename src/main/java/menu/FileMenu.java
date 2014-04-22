@@ -4,6 +4,7 @@ import gui.Window;
 
 import javax.swing.JMenu;
 
+import menu.item.CalculateAverageColor;
 import menu.item.CopyImageSelectionMenuItem;
 import menu.item.CreateCircleMenuItem;
 import menu.item.CreateSquareMenuItem;
@@ -25,6 +26,7 @@ public class FileMenu extends JMenu {
 		this.add(new PasteImageSelectionMenuItem(window));
 		this.add(new CreateSquareMenuItem(window));
 		this.add(new CreateCircleMenuItem(window));
+		this.add(new CalculateAverageColor(window));
 	}
 
 }

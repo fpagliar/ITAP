@@ -71,4 +71,6 @@ public interface Image {
 	public Image getImagePart(Rectangle selection);
 
 	public void pasteImagePart(BufferedImage other, Rectangle selection);
+	
+	public Color calculateAverage(Rectangle selection);
 }

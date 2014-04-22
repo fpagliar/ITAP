@@ -22,7 +22,8 @@ public class ColorImage implements Image, Cloneable {
 		this.blue = new Channel(width, height);
 		this.format = format;
 		this.type = type;
-		this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		this.image = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_RGB);
 	}
 
 	public ColorImage(BufferedImage bufferedImage, ImageFormat format,
@@ -144,5 +145,31 @@ public class ColorImage implements Image, Cloneable {
 						other.getRGB(xpos - selection.x, ypos - selection.y));
 			}
 		}
+	}
+
+	public Color calculateAverage(Rectangle selection) {
+		// Point check
+		if (selection.x < 0 || selection.x > image.getWidth()
+				|| selection.y < 0 || selection.y > image.getHeight())
+			new ErrorWindow("invalid location, out of bounds!");
+		// Rectangle check
+		if (selection.x + selection.width > image.getWidth()
+				|| selection.y + selection.height > image.getHeight())
+			new ErrorWindow("invalid location rectangle gets out of bounds");
+
+		int rSum = 0, gSum = 0, bSum = 0, qty = 0;
+
+		// Loads the pixels in each one of the channels
+		for (int xpos = selection.x; xpos < selection.x + selection.width; xpos++) {
+			for (int ypos = selection.y; ypos < selection.y + selection.height; ypos++) {
+				// Changing from the image coordinates to the other's
+				// coordinates
+				rSum += red.getPixel(xpos, ypos);
+				gSum += green.getPixel(xpos, ypos);
+				bSum += blue.getPixel(xpos, ypos);
+				qty++;
+			}
+		}
+		return new Color(rSum / qty, gSum / qty, bSum / qty);
 	}
 }
