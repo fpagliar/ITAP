@@ -80,4 +80,6 @@ public interface Image {
 	public Image multiply(double scalar);
 	public void dynamicRangeCompression();
 	public void toGrayscale();
+	public void negative();
+
 }

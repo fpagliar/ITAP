@@ -157,9 +157,9 @@ public class Channel implements Cloneable {
 		return newChannel;
 	}
 	
-	public void dynamicRangeCompression(double R) {
-		double L = MAX_CHANNEL_COLOR;
-		double c = (L - 1) / Math.log(1 + R);
+	public void dynamicRangeCompression(double MAXr) {
+		double R = MAX_CHANNEL_COLOR;
+		double c = (R - 1) / Math.log(MAXr + 1);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				double r = this.getPixel(x, y);

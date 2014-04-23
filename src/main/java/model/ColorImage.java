@@ -256,4 +256,10 @@ public class ColorImage implements Image, Cloneable {
 			}
 		}
 	}
+	
+	public void negative() {
+		this.red.negative();
+		this.blue.negative();
+		this.green.negative();
+	}
 }
