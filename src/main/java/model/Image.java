@@ -77,4 +77,5 @@ public interface Image {
 	public Image add(Image img);
 	public Image substract(Image img);
 	public Image multiply(Image img);
+	public Image multiply(double scalar);
 }

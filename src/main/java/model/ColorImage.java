@@ -186,7 +186,6 @@ public class ColorImage implements Image, Cloneable {
 		return this;
 	}
 	
-	
 	public Image substract(Image img) {
 		ColorImage ci = (ColorImage) img;
 		this.red.substract(ci.red);
@@ -200,6 +199,13 @@ public class ColorImage implements Image, Cloneable {
 		this.red.multiply(ci.red);
 		this.green.multiply(ci.green);
 		this.blue.multiply(ci.blue);
+		return this;
+	}
+	
+	public Image multiply(double scalar) {
+		this.red.multiply(scalar);
+		this.green.multiply(scalar);
+		this.blue.multiply(scalar);
 		return this;
 	}
 	
