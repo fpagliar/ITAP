@@ -5,6 +5,7 @@ import gui.Window;
 import javax.swing.JMenu;
 
 import menu.item.operations.AddImagesMenuItem;
+import menu.item.operations.DynamicRangeCompressionMenuItem;
 import menu.item.operations.MultiplyImagesMenuItem;
 import menu.item.operations.ScalarProductMenuItem;
 import menu.item.operations.SubstractImagesMenuItem;
@@ -23,5 +24,6 @@ public class OperationsMenu extends JMenu {
 		this.add(new MultiplyImagesMenuItem(window));
 		this.add(new ScalarProductMenuItem(window));
 		this.add(new ToGrayscaleMenuItem(window));
+		this.add(new DynamicRangeCompressionMenuItem(window));
 	}
 }

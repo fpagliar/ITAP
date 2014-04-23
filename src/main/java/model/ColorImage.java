@@ -241,6 +241,7 @@ public class ColorImage implements Image, Cloneable {
 	}
 	
 	public void toGrayscale() {
+		//TODO: add the grayscale depth (ex 16 possiblities and use a kind of casting to get the real value)
 		type = ImageType.GRAYSCALE;
 		for (int x = 0; x < this.getWidth(); x++) {
 			for (int y = 0; y < this.getHeight(); y++) {
