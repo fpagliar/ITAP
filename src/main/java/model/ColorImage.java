@@ -216,4 +216,43 @@ public class ColorImage implements Image, Cloneable {
 			}
 		}
 	}
+	
+	public void dynamicRangeCompression() {
+		double maxRed = -Double.MAX_VALUE;
+		double maxGreen = -Double.MAX_VALUE;
+		double maxBlue = -Double.MAX_VALUE;
+
+		// Calculates R
+		for (int x = 0; x < this.getWidth(); x++) {
+			for (int y = 0; y < this.getHeight(); y++) {
+				double redPixel = red.getPixel(x, y);
+				double greenPixel = green.getPixel(x, y);
+				double bluePixel = blue.getPixel(x, y);
+
+				maxRed = Math.max(maxRed, redPixel);
+				maxGreen = Math.max(maxGreen, greenPixel);
+				maxBlue = Math.max(maxBlue, bluePixel);
+			}
+		}
+
+		this.red.dynamicRangeCompression(maxRed);
+		this.green.dynamicRangeCompression(maxGreen);
+		this.blue.dynamicRangeCompression(maxBlue);
+	}
+	
+	public void toGrayscale() {
+		type = ImageType.GRAYSCALE;
+		for (int x = 0; x < this.getWidth(); x++) {
+			for (int y = 0; y < this.getHeight(); y++) {
+				double redPixel = red.getPixel(x, y);
+				double greenPixel = green.getPixel(x, y);
+				double bluePixel = blue.getPixel(x, y);
+				double avg = (redPixel + greenPixel + bluePixel)/3;
+
+				red.setPixel(x, y, avg);
+				green.setPixel(x, y, avg);
+				blue.setPixel(x, y, avg);
+			}
+		}
+	}
 }

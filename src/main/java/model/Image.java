@@ -78,4 +78,6 @@ public interface Image {
 	public Image substract(Image img);
 	public Image multiply(Image img);
 	public Image multiply(double scalar);
+	public void dynamicRangeCompression();
+	public void toGrayscale();
 }

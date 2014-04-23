@@ -8,6 +8,7 @@ import menu.item.operations.AddImagesMenuItem;
 import menu.item.operations.MultiplyImagesMenuItem;
 import menu.item.operations.ScalarProductMenuItem;
 import menu.item.operations.SubstractImagesMenuItem;
+import menu.item.operations.ToGrayscaleMenuItem;
 
 public class OperationsMenu extends JMenu {
 
@@ -21,5 +22,6 @@ public class OperationsMenu extends JMenu {
 		this.add(new SubstractImagesMenuItem(window));
 		this.add(new MultiplyImagesMenuItem(window));
 		this.add(new ScalarProductMenuItem(window));
+		this.add(new ToGrayscaleMenuItem(window));
 	}
 }
