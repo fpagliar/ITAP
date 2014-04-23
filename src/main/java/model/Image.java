@@ -73,4 +73,6 @@ public interface Image {
 	public void pasteImagePart(BufferedImage other, Rectangle selection);
 	
 	public Color calculateAverage(Rectangle selection);
+	
+	public Image add(Image img);
 }

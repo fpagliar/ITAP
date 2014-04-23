@@ -1,4 +1,4 @@
-package menu.item;
+package menu.item.file;
 
 import gui.Window;
 
@@ -9,20 +9,20 @@ import javax.swing.JMenuItem;
 
 import utils.BinaryImageManager;
 
-public class CreateCircleMenuItem extends JMenuItem {
+public class CreateSquareMenuItem extends JMenuItem {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public CreateCircleMenuItem(final Window window){
-		super("New binay circle");
+	public CreateSquareMenuItem(final Window window){
+		super("New binay square");
 		
 		this.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				window.getFocusedPanel().setImage(BinaryImageManager.createCircle(200, 200));
+				window.getFocusedPanel().setImage(BinaryImageManager.createSquare(200, 200));
 				window.repaint();
 			}
 		});

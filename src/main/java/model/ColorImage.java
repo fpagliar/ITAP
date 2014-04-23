@@ -70,6 +70,7 @@ public class ColorImage implements Image, Cloneable {
 	}
 
 	public BufferedImage getImage() {
+		this.applyChanges();
 		return image;
 	}
 
@@ -175,5 +176,22 @@ public class ColorImage implements Image, Cloneable {
 			}
 		}
 		return new Color(rSum / qty, gSum / qty, bSum / qty);
+	}
+
+	public Image add(Image img) {
+		ColorImage ci = (ColorImage) img;
+		//TODO: fix bug when adding a large image with a small one
+		this.red.add(ci.red);
+		this.green.add(ci.green);
+		this.blue.add(ci.blue);
+		return this;
+	}
+
+	private void applyChanges() {
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
+				this.setPixel(x, y, this.getRGBPixel(x, y));
+			}
+		}
 	}
 }

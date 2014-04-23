@@ -8,7 +8,7 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
-import menu.item.SelectPanelMenuItem;
+import menu.item.file.SelectPanelMenuItem;
 
 public class Window extends JFrame {
 
@@ -39,23 +39,25 @@ public class Window extends JFrame {
 	}
 
 	public Panel getFocusedPanel() {
-		if(focused == panel1.getId())
+		if (focused == panel1.getId())
 			return panel1;
 		else
 			return panel2;
 	}
 
-	// public void resize()
-	// {
-	// this.setSize(panel1.getImage().getWidth(),
-	// panel1.getImage().getHeight());
-	// }
+	public Panel getUnfocusedPanel() {
+		if (focused != panel1.getId())
+			return panel1;
+		else
+			return panel2;
+	}
 
 	public void focus(Panel panel) {
 		panel1.getMenuItem().setEnabled(true);
 		panel2.getMenuItem().setEnabled(true);
 
-		//Both panel selection is activated and then the selected panel selection is deactivated.
+		// Both panel selection is activated and then the selected panel
+		// selection is deactivated.
 		focused = panel.getId();
 		panel.getMenuItem().setEnabled(false);
 	}

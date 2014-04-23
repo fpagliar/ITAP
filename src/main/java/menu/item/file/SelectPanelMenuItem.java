@@ -1,4 +1,4 @@
-package menu.item;
+package menu.item.file;
 
 import gui.Panel;
 import gui.Window;
