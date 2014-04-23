@@ -1,6 +1,5 @@
 package model;
 
-
 public class Channel implements Cloneable {
 
 	static final int MIN_CHANNEL_COLOR = 0;
@@ -101,8 +100,8 @@ public class Channel implements Cloneable {
 	}
 
 	public void add(Channel otherChannel) {
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width && x < otherChannel.width; x++) {
+			for (int y = 0; y < height && y < otherChannel.height; y++) {
 				double color = this.getPixel(x, y)
 						+ otherChannel.getPixel(x, y);
 				this.setPixel(x, y, color);
@@ -111,8 +110,8 @@ public class Channel implements Cloneable {
 	}
 
 	public void substract(Channel otherChannel) {
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width && x < otherChannel.width; x++) {
+			for (int y = 0; y < height && y < otherChannel.height; y++) {
 				double color = this.getPixel(x, y)
 						- otherChannel.getPixel(x, y);
 				color = Math.abs(color);
@@ -122,8 +121,8 @@ public class Channel implements Cloneable {
 	}
 
 	public void multiply(Channel otherChannel) {
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width && x < otherChannel.width; x++) {
+			for (int y = 0; y < height && y < otherChannel.height; y++) {
 				double color = this.getPixel(x, y)
 						* otherChannel.getPixel(x, y);
 				this.setPixel(x, y, color);

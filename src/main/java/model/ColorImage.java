@@ -180,13 +180,29 @@ public class ColorImage implements Image, Cloneable {
 
 	public Image add(Image img) {
 		ColorImage ci = (ColorImage) img;
-		//TODO: fix bug when adding a large image with a small one
 		this.red.add(ci.red);
 		this.green.add(ci.green);
 		this.blue.add(ci.blue);
 		return this;
 	}
+	
+	
+	public Image substract(Image img) {
+		ColorImage ci = (ColorImage) img;
+		this.red.substract(ci.red);
+		this.green.substract(ci.green);
+		this.blue.substract(ci.blue);
+		return this;
+	}
 
+	public Image multiply(Image img) {
+		ColorImage ci = (ColorImage) img;
+		this.red.multiply(ci.red);
+		this.green.multiply(ci.green);
+		this.blue.multiply(ci.blue);
+		return this;
+	}
+	
 	private void applyChanges() {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
