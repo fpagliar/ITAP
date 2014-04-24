@@ -185,7 +185,7 @@ public class ColorImage implements Image, Cloneable {
 		this.blue.add(ci.blue);
 		return this;
 	}
-	
+
 	public Image substract(Image img) {
 		ColorImage ci = (ColorImage) img;
 		this.red.substract(ci.red);
@@ -201,14 +201,14 @@ public class ColorImage implements Image, Cloneable {
 		this.blue.multiply(ci.blue);
 		return this;
 	}
-	
+
 	public Image multiply(double scalar) {
 		this.red.multiply(scalar);
 		this.green.multiply(scalar);
 		this.blue.multiply(scalar);
 		return this;
 	}
-	
+
 	private void applyChanges() {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
@@ -216,7 +216,7 @@ public class ColorImage implements Image, Cloneable {
 			}
 		}
 	}
-	
+
 	public void dynamicRangeCompression() {
 		double maxRed = -Double.MAX_VALUE;
 		double maxGreen = -Double.MAX_VALUE;
@@ -239,16 +239,17 @@ public class ColorImage implements Image, Cloneable {
 		this.green.dynamicRangeCompression(maxGreen);
 		this.blue.dynamicRangeCompression(maxBlue);
 	}
-	
+
 	public void toGrayscale() {
-		//TODO: add the grayscale depth (ex 16 possiblities and use a kind of casting to get the real value)
+		// TODO: add the grayscale depth (ex 16 possiblities and use a kind of
+		// casting to get the real value)
 		type = ImageType.GRAYSCALE;
 		for (int x = 0; x < this.getWidth(); x++) {
 			for (int y = 0; y < this.getHeight(); y++) {
 				double redPixel = red.getPixel(x, y);
 				double greenPixel = green.getPixel(x, y);
 				double bluePixel = blue.getPixel(x, y);
-				double avg = (redPixel + greenPixel + bluePixel)/3;
+				double avg = (redPixel + greenPixel + bluePixel) / 3;
 
 				red.setPixel(x, y, avg);
 				green.setPixel(x, y, avg);
@@ -256,10 +257,26 @@ public class ColorImage implements Image, Cloneable {
 			}
 		}
 	}
-	
+
 	public void negative() {
 		this.red.negative();
 		this.blue.negative();
 		this.green.negative();
 	}
+
+	public int[] getPixelArray() {
+		return image.getRGB(0, 0, this.getWidth(), this.getHeight(), null, 0,
+				this.getWidth());
+	}
+	
+	public Image clone()
+	{
+		ColorImage other = new ColorImage(getHeight(), getWidth(), format, type);
+		other.red = red.clone();
+		other.green = green.clone();
+		other.blue = blue.clone();
+		other.image.setRGB(0, 0, getWidth(), getHeight(), getPixelArray(), 0, getWidth());
+		return other;
+	}
+
 }
