@@ -5,6 +5,11 @@ import gui.ErrorWindow;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import utils.RandomNumberGenerator;
 
@@ -365,6 +370,89 @@ public class ColorImage implements Image, Cloneable {
 					blue.setPixel(x, y, Channel.MAX_CHANNEL_COLOR);
 				}
 			}
+		}
+	}
+
+	public Color applyMeanFilter(int pixelX, int pixelY, int rectangleSide) {
+		// TODO: check if it should send out of bounds exception?
+		if (pixelX < 0 || pixelX > getWidth() || pixelY < 0
+				|| pixelY > getHeight())
+			return null;
+
+		double valueR = 0, valueG = 0, valueB = 0, pixelQty = 0;
+		for (int x = pixelX - rectangleSide / 2; x < pixelX + rectangleSide / 2; x++)
+			for (int y = pixelY - rectangleSide / 2; y < pixelY + rectangleSide
+					/ 2; y++) {
+				try {
+					valueR += getPixelFromChannel(x, y, ColorChannel.RED);
+					valueG += getPixelFromChannel(x, y, ColorChannel.GREEN);
+					valueB += getPixelFromChannel(x, y, ColorChannel.BLUE);
+					pixelQty++;
+				} catch (IndexOutOfBoundsException e) {
+					// Ignore
+				}
+			}
+		valueR /= pixelQty;
+		valueG /= pixelQty;
+		valueB /= pixelQty;
+		return new Color((int) valueR, (int) valueG, (int) valueB);
+	}
+
+	public Color applyMedianFilter(int pixelX, int pixelY, int rectangleSide) {
+		// TODO: check if it should send out of bounds exception?
+		if (pixelX < 0 || pixelX > getWidth() || pixelY < 0
+				|| pixelY > getHeight())
+			return null;
+
+		int length = 0;
+		for (int x = pixelX - rectangleSide / 2; x < pixelX + rectangleSide / 2; x++)
+			for (int y = pixelY - rectangleSide / 2; y < pixelY + rectangleSide
+					/ 2; y++) {
+				try {
+					getPixelFromChannel(x, y, ColorChannel.RED);
+					length++;
+				} catch (IndexOutOfBoundsException e) {
+					// Ignore
+				}
+			}
+		double[] rValues = new double[length];
+		double[] gValues = new double[length];
+		double[] bValues = new double[length];
+		int i = 0;
+
+		for (int x = pixelX - rectangleSide / 2; x < pixelX + rectangleSide / 2; x++)
+			for (int y = pixelY - rectangleSide / 2; y < pixelY + rectangleSide
+					/ 2; y++) {
+				try {
+					rValues[i] = getPixelFromChannel(x, y, ColorChannel.RED);
+					gValues[i] = getPixelFromChannel(x, y, ColorChannel.GREEN);
+					bValues[i] = getPixelFromChannel(x, y, ColorChannel.BLUE);
+					i++;
+				} catch (IndexOutOfBoundsException e) {
+					// Ignore
+				}
+			}
+
+		Arrays.sort(rValues);
+		Arrays.sort(gValues);
+		Arrays.sort(bValues);
+
+		
+		if (length % 2 != 0) {
+			// Ex If length is 5, the index is 2 (0,1,2,3,4)
+			return new Color((int) rValues[length / 2],
+					(int) gValues[length / 2], (int) bValues[length / 2]);
+		} else if( length == 2){
+			return new Color(
+					(int) (rValues[0] + rValues[1]) / 2,
+					(int) (gValues[0] + gValues[1]) / 2,
+					(int) (bValues[0] + bValues[1]) / 2);
+		} else {
+			// Ex If length is 6, the index is 2 and 3 (0,1,2,3,4,5)
+			return new Color(
+					(int) (rValues[length / 2] + rValues[length / 2 + 1]) / 2,
+					(int) (gValues[length / 2] + gValues[length / 2 + 1]) / 2,
+					(int) (bValues[length / 2] + bValues[length / 2 + 1]) / 2);
 		}
 	}
 }

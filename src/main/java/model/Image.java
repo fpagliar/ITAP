@@ -99,7 +99,9 @@ public interface Image {
 	public void rayleighNoise(double epsilon);
 
 	public void gausseanNoise(double mean, double standardDeviation);
-	
+
 	public void saltAndPepperNoise(double po, double p1);
 
+	public Color applyMeanFilter(int pixelX, int pixelY, int rectangleSide);
+	public Color applyMedianFilter(int pixelX, int pixelY, int rectangleSide);
 }
