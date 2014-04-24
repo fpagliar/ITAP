@@ -5,6 +5,8 @@ import gui.Window;
 import javax.swing.JMenu;
 
 import menu.item.operations.noise.ExponentialNoiseMenuItem;
+import menu.item.operations.noise.GaussianNoiseMenuItem;
+import menu.item.operations.noise.RayleighNoiseMenuItem;
 
 public class ApplyNoiseMenu extends JMenu {
 
@@ -15,5 +17,7 @@ public class ApplyNoiseMenu extends JMenu {
 		this.setEnabled(true);
 
 		this.add(new ExponentialNoiseMenuItem(window));
+		this.add(new RayleighNoiseMenuItem(window));
+		this.add(new GaussianNoiseMenuItem(window));
 	}
 }

@@ -96,4 +96,8 @@ public interface Image {
 
 	public void exponentialNoise(double u);
 
+	public void rayleighNoise(double epsilon);
+
+	public void gausseanNoise(double mean, double standardDeviation);
+
 }

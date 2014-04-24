@@ -9,25 +9,25 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-public class ExponentialNoiseMenuItem extends JMenuItem {
+public class RayleighNoiseMenuItem extends JMenuItem {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ExponentialNoiseMenuItem(final Window window) {
-		super("Exponential");
+	public RayleighNoiseMenuItem(final Window window) {
+		super("Rayleigh");
 
 		setEnabled(true);
 
 		this.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				new InputDoubleWindow(window, "Mean", 1.0, new InputDoubleAction() {
+				new InputDoubleWindow(window, "Epsilon", 1.0, new InputDoubleAction() {
 					
 					public void performAction(Window window, double input) {
 						window.getUnfocusedPanel().setImage(window.getFocusedPanel().getImage().clone());
-						window.getUnfocusedPanel().getImage().exponentialNoise(input);
+						window.getUnfocusedPanel().getImage().rayleighNoise(input);
 						window.repaint();
 					}
 				});
