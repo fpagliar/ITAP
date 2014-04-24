@@ -5,6 +5,8 @@ import gui.Window;
 import javax.swing.JMenu;
 
 import menu.item.operations.AddImagesMenuItem;
+import menu.item.operations.ApplyNoiseMenu;
+import menu.item.operations.ApplyThresholdMenuItem;
 import menu.item.operations.DynamicRangeCompressionMenuItem;
 import menu.item.operations.MultiplyImagesMenuItem;
 import menu.item.operations.NegativeMenuItem;
@@ -27,5 +29,7 @@ public class OperationsMenu extends JMenu {
 		this.add(new ToGrayscaleMenuItem(window));
 		this.add(new DynamicRangeCompressionMenuItem(window));
 		this.add(new NegativeMenuItem(window));
+		this.add(new ApplyThresholdMenuItem(window));
+		this.add(new ApplyNoiseMenu(window));
 	}
 }

@@ -11,22 +11,24 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class ScalarProductWindow extends JFrame implements ActionListener {
+public class InputDoubleWindow extends JFrame implements ActionListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private TextField scalar;
 	private Window window;
+	private InputDoubleAction action;
 
-	public ScalarProductWindow(Window window) {
+	public InputDoubleWindow(Window window, String label, Double defaultValue, InputDoubleAction action) {
 		this.window = window;
+		this.action = action;
 
 		final JPanel panel = new JPanel();
 
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		setBounds(1, 1, 100, 50);
+		setBounds(1, 1, 130, 55);
 		this.setVisible(true);
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((size.width - getWidth()) / 2,
@@ -36,10 +38,10 @@ public class ScalarProductWindow extends JFrame implements ActionListener {
 		GridLayout layout = new GridLayout(1, 1);
 		panel.setLayout(layout);
 
-		Label xLabel = new Label("Factor: ");
+		Label xLabel = new Label(label);
 		panel.add(xLabel);
 		scalar = new TextField(5);
-		scalar.setText("1");
+		scalar.setText(defaultValue.toString());
 		scalar.addActionListener(this);
 		panel.add(scalar);
 	}
@@ -47,8 +49,7 @@ public class ScalarProductWindow extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		try {
 			double ret = Double.parseDouble(scalar.getText());
-			window.getFocusedPanel().getImage().multiply(ret);
-			window.repaint();
+			action.performAction(window, ret);
 		} catch (NumberFormatException e) {
 			new ErrorWindow("Invalid value");
 		}

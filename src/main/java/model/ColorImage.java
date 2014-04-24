@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import utils.RandomNumberGenerator;
+
 public class ColorImage implements Image, Cloneable {
 
 	private ImageType type;
@@ -268,15 +270,51 @@ public class ColorImage implements Image, Cloneable {
 		return image.getRGB(0, 0, this.getWidth(), this.getHeight(), null, 0,
 				this.getWidth());
 	}
-	
-	public Image clone()
-	{
+
+	public Image clone() {
 		ColorImage other = new ColorImage(getHeight(), getWidth(), format, type);
 		other.red = red.clone();
 		other.green = green.clone();
 		other.blue = blue.clone();
-		other.image.setRGB(0, 0, getWidth(), getHeight(), getPixelArray(), 0, getWidth());
+		other.image.setRGB(0, 0, getWidth(), getHeight(), getPixelArray(), 0,
+				getWidth());
 		return other;
 	}
 
+	// TODO: fix this! Not working
+	public void applyThreshold(double value) {
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
+				double pixelColor = ((int) (red.getPixel(x, y)) >> 16) & 0xFF;
+				Color newColor = (pixelColor < value) ? Color.WHITE
+						: Color.BLACK;
+				red.setPixel(x, y, newColor.getRed());
+				System.out.println("setting red:" + pixelColor);
+
+				pixelColor = ((int) (green.getPixel(x, y)) >> 8) & 0xFF;
+				newColor = (pixelColor < value) ? Color.WHITE : Color.BLACK;
+				green.setPixel(x, y, newColor.getGreen());
+				System.out.println("setting green:" + pixelColor);
+
+				pixelColor = ((int) (blue.getPixel(x, y))) & 0xFF;
+				newColor = (pixelColor < value) ? Color.WHITE : Color.BLACK;
+				blue.setPixel(x, y, newColor.getBlue());
+				System.out.println("setting blue:" + pixelColor);
+			}
+		}
+	}
+
+	public void exponentialNoise(double u) {
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
+				double noise = RandomNumberGenerator.exponential(u);
+				// f(i,j) = s(i,j) + n(i,j) --- s is the image, n is the noise
+				// n(i,j) = s(i,j) * yk ------- yk is the exponential variable
+				System.out.println("Noise: " + noise );
+				red.setPixel(x, y, red.getPixel(x, y) + red.getPixel(x, y) * noise);
+				green.setPixel(x, y, green.getPixel(x, y) + green.getPixel(x, y) * noise);
+				blue.setPixel(x, y, blue.getPixel(x, y) + blue.getPixel(x, y) * noise);
+			}
+		}
+	}
 }

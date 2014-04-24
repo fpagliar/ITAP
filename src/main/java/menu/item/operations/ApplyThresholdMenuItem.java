@@ -9,22 +9,27 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-public class ScalarProductMenuItem extends JMenuItem {
+import model.Image;
+
+public class ApplyThresholdMenuItem extends JMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-	public ScalarProductMenuItem(final Window window) {
-		super("Scalar product");
+	public ApplyThresholdMenuItem(final Window window) {
+		super("Apply threshold");
 
 		setEnabled(true);
 
 		this.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				new InputDoubleWindow(window, "Factor", 1.0, new InputDoubleAction() {
+				new InputDoubleWindow(window, "Threshold", 255.0/2, new InputDoubleAction() {
 					
 					public void performAction(Window window, double input) {
-						window.getFocusedPanel().getImage().multiply(input);
+						
+						Image other = window.getFocusedPanel().getImage().clone();
+						other.applyThreshold(input);
+						window.getUnfocusedPanel().setImage(other);
 						window.repaint();
 					}
 				});

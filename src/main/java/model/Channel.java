@@ -1,5 +1,7 @@
 package model;
 
+import java.awt.Color;
+
 public class Channel implements Cloneable {
 
 	static final int MIN_CHANNEL_COLOR = 0;
@@ -84,12 +86,6 @@ public class Channel implements Cloneable {
 		return channel[y * this.getWidth() + x];
 	}
 
-	/**
-	 * Truncates a pixel if it is out of vissibly color ranges
-	 * 
-	 * @param originalValue
-	 * @return
-	 */
 	int truncatePixel(double originalValue) {
 		if (originalValue > Channel.MAX_CHANNEL_COLOR) {
 			return Channel.MAX_CHANNEL_COLOR;
@@ -140,7 +136,8 @@ public class Channel implements Cloneable {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				double color = this.getPixel(x, y);
-				this.setPixel(x, y, MAX_CHANNEL_COLOR - color);
+				//T(r) = -r + L - 1 -- (L - 1 is represented by MAX_CHANNEL_COLOR)
+				this.setPixel(x, y, - color + MAX_CHANNEL_COLOR);
 			}
 		}
 	}
@@ -157,9 +154,9 @@ public class Channel implements Cloneable {
 		return newChannel;
 	}
 	
-	public void dynamicRangeCompression(double MAXr) {
-		double R = MAX_CHANNEL_COLOR;
-		double c = (R - 1) / Math.log(MAXr + 1);
+	public void dynamicRangeCompression(double R) {
+		double L = MAX_CHANNEL_COLOR;
+		double c = (L - 1) / Math.log(1 + R);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				double r = this.getPixel(x, y);

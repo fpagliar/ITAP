@@ -39,6 +39,7 @@ public class ColorUtilities {
 		for(int i=0; i < pixelArray.length; i++)
 			histogramValues[i] = (double) (pixelArray[i] & 0xFF);
 
+		//TODO: add a nicer fix?
 		//Added a -10 value to move the scale from 0!
 		histogramValues[pixelArray.length] = -10;
 		dataset.addSeries("Histogram", histogramValues, histogramValues.length);

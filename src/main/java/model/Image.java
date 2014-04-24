@@ -92,4 +92,8 @@ public interface Image {
 
 	public Image clone();
 
+	public void applyThreshold(double value);
+
+	public void exponentialNoise(double u);
+
 }
