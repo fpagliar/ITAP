@@ -99,5 +99,7 @@ public interface Image {
 	public void rayleighNoise(double epsilon);
 
 	public void gausseanNoise(double mean, double standardDeviation);
+	
+	public void saltAndPepperNoise(double po, double p1);
 
 }

@@ -5,6 +5,7 @@ import net.sf.doodleproject.numerics4j.random.NormalRandomVariable;
 import net.sf.doodleproject.numerics4j.random.RNG;
 import net.sf.doodleproject.numerics4j.random.RandomRNG;
 import net.sf.doodleproject.numerics4j.random.RayleighRandomVariable;
+import net.sf.doodleproject.numerics4j.random.UniformRandomVariable;
 
 public class RandomNumberGenerator {
 
@@ -22,5 +23,8 @@ public class RandomNumberGenerator {
 	public static double exponential(double lambda) {
 		return ExponentialRandomVariable.nextRandomVariable(1 / lambda, rng);
 	}
-
+	
+	public static double uniform(double min, double max) {
+		return UniformRandomVariable.nextRandomVariable(min, max, rng);
+	}
 }
