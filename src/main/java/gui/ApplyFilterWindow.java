@@ -10,6 +10,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -24,6 +27,7 @@ public class ApplyFilterWindow {
 	private Rectangle captureRect;
 	private Boolean rectangleDefined = false;
 	private static Image image;
+	private Map<Point, Color> points = new HashMap<Point, Color>();
 	private int size;
 	private int type;
 
@@ -135,11 +139,18 @@ public class ApplyFilterWindow {
 		});
 
 		JOptionPane.showMessageDialog(null, panel);
+		points = new HashMap<Point, Color>();
 	}
 
 	public void repaint(BufferedImage orig, BufferedImage copy) {
 		Graphics2D g = copy.createGraphics();
-		g.drawImage(orig, 0, 0, null);
+		
+		Image filteredCopy = image.clone(); 
+		for(Point p : points.keySet())
+			filteredCopy.setPixel(p.x, p.y, points.get(p));
+		
+//		g.drawImage(orig, 0, 0, null);
+		g.drawImage(filteredCopy.getImage(), 0, 0, null);
 		if (captureRect != null) {
 			g.setColor(Color.RED);
 			g.draw(captureRect);
@@ -164,6 +175,7 @@ public class ApplyFilterWindow {
 		i = 0;
 		for (int x = captureRect.x; x < captureRect.x + captureRect.width; x++)
 			for (int y = captureRect.y; y < captureRect.y + captureRect.height; y++)
-				image.setPixel(x, y, filteredValues[i++]);
+				points.put(new Point(x, y),  filteredValues[i++]);
+//				image.setPixel(x, y, filteredValues[i++]);
 	}
 }

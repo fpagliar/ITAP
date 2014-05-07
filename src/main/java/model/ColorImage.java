@@ -290,21 +290,14 @@ public class ColorImage implements Image, Cloneable {
 	public void applyThreshold(double value) {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
-				double pixelColor = ((int) (red.getPixel(x, y)) >> 16) & 0xFF;
+				double pixelColor = (int) red.getPixel(x, y);
 				Color newColor = (pixelColor < value) ? Color.WHITE
 						: Color.BLACK;
+				// Red green and blue are the same if it is grayscale
+				//TODO: should this be available for color images?
 				red.setPixel(x, y, newColor.getRed());
-				System.out.println("setting red:" + pixelColor);
-
-				pixelColor = ((int) (green.getPixel(x, y)) >> 8) & 0xFF;
-				newColor = (pixelColor < value) ? Color.WHITE : Color.BLACK;
 				green.setPixel(x, y, newColor.getGreen());
-				System.out.println("setting green:" + pixelColor);
-
-				pixelColor = ((int) (blue.getPixel(x, y))) & 0xFF;
-				newColor = (pixelColor < value) ? Color.WHITE : Color.BLACK;
 				blue.setPixel(x, y, newColor.getBlue());
-				System.out.println("setting blue:" + pixelColor);
 			}
 		}
 	}
