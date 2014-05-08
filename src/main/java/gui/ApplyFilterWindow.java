@@ -31,16 +31,18 @@ public class ApplyFilterWindow {
 	private int size;
 	private int type;
 	private double sigma;
+	private Window window;
 
 	// TYPE = 1 for mean
 	// TYPE = 2 for median
 	// TYPE = 3 for gaussian
 	//SIGMA IS ONLY USED IN GAUSSIAN MODE
-	public ApplyFilterWindow(final Image image, int size, double sigma, int type) {
+	public ApplyFilterWindow(Window window, final Image image, int size, double sigma, int type) {
 		ApplyFilterWindow.image = image;
 		this.size = size;
 		this.type = type;
 		this.sigma = sigma;
+		this.window = window;
 		
 		final BufferedImage bufferedImage = image.getImage();
 		final BufferedImage screenCopy = new BufferedImage(
@@ -144,6 +146,11 @@ public class ApplyFilterWindow {
 		});
 
 		JOptionPane.showMessageDialog(null, panel);
+		Image filteredCopy = image.clone(); 
+		for(Point p : points.keySet())
+			filteredCopy.setPixel(p.x, p.y, points.get(p));
+		window.getUnfocusedPanel().setImage(filteredCopy);
+		window.repaint();
 		points = new HashMap<Point, Color>();
 	}
 

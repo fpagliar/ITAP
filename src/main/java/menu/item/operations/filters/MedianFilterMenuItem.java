@@ -27,7 +27,7 @@ public class MedianFilterMenuItem extends JMenuItem {
 
 							public void performAction(Window window,
 									double input) {
-								new ApplyFilterWindow(window.getFocusedPanel()
+								new ApplyFilterWindow(window, window.getFocusedPanel()
 										.getImage(), (int) input, 0, 2);
 							}
 						});

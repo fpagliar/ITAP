@@ -25,7 +25,7 @@ public class MeanFilterMenuItem  extends JMenuItem {
 				new InputDoubleWindow(window, "Side:", 3.0, new InputDoubleAction() {
 					
 					public void performAction(Window window, double input) {
-						new ApplyFilterWindow(window.getFocusedPanel().getImage(), (int)input, 0, 1);
+						new ApplyFilterWindow(window, window.getFocusedPanel().getImage(), (int)input, 0, 1);
 					}
 				});
 			}

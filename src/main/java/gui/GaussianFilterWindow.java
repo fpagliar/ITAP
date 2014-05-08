@@ -56,7 +56,7 @@ public class GaussianFilterWindow extends JFrame implements ActionListener {
 			try {
 				double ret = Double.parseDouble(scalar.getText());
 				double ret2 = Double.parseDouble(scalar2.getText());
-				new ApplyFilterWindow(window.getFocusedPanel().getImage(), (int)ret, ret2, 3);
+				new ApplyFilterWindow(window, window.getFocusedPanel().getImage(), (int)ret, ret2, 3);
 			} catch (NumberFormatException e) {
 				new ErrorWindow("Invalid value");
 			}
