@@ -1,6 +1,6 @@
 package model;
 
-import java.awt.Color;
+import utils.Mask;
 
 public class Channel implements Cloneable {
 
@@ -203,5 +203,52 @@ public class Channel implements Cloneable {
 			}
 		}
 		return newChannel;
+	}
+	
+	
+	public void applyMask(Mask mask) {
+		Channel newChannel = new Channel(this.width, this.height);
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				double newPixel = applyMask(x, y, mask);
+				newChannel.setPixel(x, y, newPixel);
+			}
+		}
+		this.channel = newChannel.channel;
+	}
+	
+	private double applyMask(int pointX, int pointY, Mask mask) {
+		double newColor = 0;
+		for (int x = -mask.getWidth() / 2; x <= mask.getWidth() / 2; x++) {
+			for (int y = -mask.getHeight() / 2; y <= mask.getHeight() / 2; y++) {
+				if (this.validPixel(pointX + x, pointY + y)) {
+					double oldColor = 0;
+					try {
+						oldColor = this.getPixel(pointX + x, pointY + y);
+						newColor += oldColor * mask.getValue(x, y);
+					} catch (IndexOutOfBoundsException e) {
+//						newColor += oldColor * mask.getValue(x, y);
+					}
+				}
+			}
+		}
+		return newColor;
+	}
+	
+	public void synthesize(Channel... chnls) {
+		double[] result = new double[width * height];
+
+		for (int x = 0; x < channel.length; x++) {
+			double[] colors = new double[chnls.length + 1];
+			colors[0] = this.channel[x];
+			for (int y = 1; y <= chnls.length; y++) {
+				colors[y] = chnls[y - 1].channel[x];
+			}
+			//AVG
+			for(double d: colors)
+				result[x] += d;
+			result[x] /= 2;
+		}
+		this.channel = result;
 	}
 }

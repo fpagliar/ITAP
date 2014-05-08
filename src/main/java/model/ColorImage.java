@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
+import utils.Mask;
 import utils.RandomNumberGenerator;
 
 public class ColorImage implements Image, Cloneable {
@@ -344,19 +345,22 @@ public class ColorImage implements Image, Cloneable {
 		}
 	}
 
-	public void saltAndPepperNoise(double po, double p1) {
+	public void saltAndPepperNoise(double percentage, double po, double p1) {
 		// TODO: ask if the random should be calculated for every channel
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
-				double random = RandomNumberGenerator.uniform(0, 1);
-				if (random <= po) {
-					red.setPixel(x, y, Channel.MIN_CHANNEL_COLOR);
-					green.setPixel(x, y, Channel.MIN_CHANNEL_COLOR);
-					blue.setPixel(x, y, Channel.MIN_CHANNEL_COLOR);
-				} else if (random >= p1) {
-					red.setPixel(x, y, Channel.MAX_CHANNEL_COLOR);
-					green.setPixel(x, y, Channel.MAX_CHANNEL_COLOR);
-					blue.setPixel(x, y, Channel.MAX_CHANNEL_COLOR);
+				double random = Math.random();
+				if(random*100 < percentage){
+					random = RandomNumberGenerator.uniform(0, 1);
+					if (random <= po) {
+						red.setPixel(x, y, Channel.MIN_CHANNEL_COLOR);
+						green.setPixel(x, y, Channel.MIN_CHANNEL_COLOR);
+						blue.setPixel(x, y, Channel.MIN_CHANNEL_COLOR);
+					} else if (random >= p1) {
+						red.setPixel(x, y, Channel.MAX_CHANNEL_COLOR);
+						green.setPixel(x, y, Channel.MAX_CHANNEL_COLOR);
+						blue.setPixel(x, y, Channel.MAX_CHANNEL_COLOR);
+					}
 				}
 			}
 		}
@@ -501,4 +505,38 @@ public class ColorImage implements Image, Cloneable {
 		green = this.green.applyAnisotropicDiffusion(bd);
 		blue = this.blue.applyAnisotropicDiffusion(bd);
 	}
+	
+	public void applyMask(Mask mask) {
+		this.red.applyMask(mask);
+		this.green.applyMask(mask);
+		this.blue.applyMask(mask);
+	}
+	
+	public void applyMasksAndSynth(Mask[] maskArray) {
+		Image copy = clone();
+
+		this.applyMask(maskArray[0]);
+		copy.applyMask(maskArray[1]);
+
+		this.synthesize(copy);
+	}
+	
+	public void synthesize(Image... imgs) {
+		Image[] cimgs = imgs;
+
+		Channel[] redChnls = new Channel[cimgs.length];
+		Channel[] greenChnls = new Channel[cimgs.length];
+		Channel[] blueChnls = new Channel[cimgs.length];
+
+		for (int i = 0; i < cimgs.length; i++) {
+			redChnls[i] = ((ColorImage) cimgs[i]).red;
+			greenChnls[i] = ((ColorImage) cimgs[i]).green;
+			blueChnls[i] = ((ColorImage) cimgs[i]).blue;
+		}
+
+		this.red.synthesize(redChnls);
+		this.green.synthesize(greenChnls);
+		this.blue.synthesize(blueChnls);
+	}
+
 }

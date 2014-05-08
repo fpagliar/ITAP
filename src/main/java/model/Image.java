@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import utils.Mask;
+
 public interface Image {
 
 	/**
@@ -100,10 +102,13 @@ public interface Image {
 
 	public void gausseanNoise(double mean, double standardDeviation);
 
-	public void saltAndPepperNoise(double po, double p1);
+	public void saltAndPepperNoise(double percentage, double po, double p1);
 
 	public Color applyMeanFilter(int pixelX, int pixelY, int rectangleSide);
 	public Color applyMedianFilter(int pixelX, int pixelY, int rectangleSide);
 	public Color applyGaussianFilter(int pixelX, int pixelY, int rectangleSide, double sigma);
 	public void applyAnisotropicDiffusion(BorderDetector bd);
+	public void applyMask(Mask mask);
+	public void applyMasksAndSynth(Mask[] maskArray);
+	public void synthesize(Image... imgs);
 }

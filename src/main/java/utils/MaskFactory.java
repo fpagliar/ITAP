@@ -3,15 +3,7 @@ package utils;
 public class MaskFactory {
 
 
-	/**
-	 * Robert's Mask | 1  0 |
-	 *               | 0  1 |
-	 *               | 0 -1 |
-	 *               |-1  0 |
-	 * 
-	 * @return
-	 */
-	public static Mask[] buildRobertsMasks() {
+	public static Mask[] robertsMask() {
 		int size = 3;
 		Mask[] array = new Mask[2];
 		Mask dx = new Mask(size);
@@ -29,17 +21,7 @@ public class MaskFactory {
 		return array;
 	}
 
-	/**
-	 * Prewitt's Mask | -1 -1 -1 |
-	 * 				  | -1  0  1 |
-	 * 				  |  0  0  0 |
-	 * 				  | -1  0  1 |
-	 * 				  |  1  1  1 |
-	 * 				  | -1  0  1 |
-	 * 
-	 * @return
-	 */
-	public static Mask[] buildPrewittMasks() {
+	public static Mask[] prewittMask() {
 		int size = 3;
 		Mask dx = new Mask(size);
 		Mask dy = new Mask(size);
@@ -50,6 +32,7 @@ public class MaskFactory {
 		dx.setPixel(-1, -1, -1);
 		dx.setPixel(-1, 0, -1);
 		dx.setPixel(-1, 1, -1);
+
 		dx.setPixel(1, -1, 1);
 		dx.setPixel(1, 0, 1);
 		dx.setPixel(1, 1, 1);
@@ -64,16 +47,7 @@ public class MaskFactory {
 		return array;
 	}
 
-	/**
-	 * Sobel's Mask | -1 -2 -1 |
-	 *              | -1  0  1 | 
-	 *              |  0  0  0 |
-	 *              | -2  0  2 | 
- 	 *              |  1  2  1 |
-	 *              | -1  0  1 | 
-	 * @return
-	 */
-	public static Mask[] buildSobelMasks() {
+	public static Mask[] sobelMask() {
 		int size = 3;
 		Mask dx = new Mask(size);
 		Mask dy = new Mask(size);
@@ -84,6 +58,7 @@ public class MaskFactory {
 		dx.setPixel(-1, -1, -1);
 		dx.setPixel(-1, 0, -2);
 		dx.setPixel(-1, 1, -1);
+		
 		dx.setPixel(1, -1, 1);
 		dx.setPixel(1, 0, 2);
 		dx.setPixel(1, 1, 1);
