@@ -495,4 +495,10 @@ public class ColorImage implements Image, Cloneable {
 					(int) (bValues[length / 2] + bValues[length / 2 + 1]) / 2);
 		}
 	}
+	
+	public void applyAnisotropicDiffusion(BorderDetector bd) {
+		red = this.red.applyAnisotropicDiffusion(bd);
+		green = this.green.applyAnisotropicDiffusion(bd);
+		blue = this.blue.applyAnisotropicDiffusion(bd);
+	}
 }

@@ -165,4 +165,43 @@ public class Channel implements Cloneable {
 			}
 		}
 	}
+	
+	/**
+	 * Applies one iteration of anisotropic diffusion.
+	 * @param bd
+	 * @return
+	 */
+	public Channel applyAnisotropicDiffusion(BorderDetector bd) {
+		Channel newChannel = new Channel(width, height);
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				double oldValueIJ = getPixel(x, y);
+
+				double DnIij = x > 0 ? getPixel(x - 1, y)
+						- oldValueIJ : 0;
+				double DsIij = x < width - 1 ? getPixel(x + 1, y)
+						- oldValueIJ : 0;
+				double DeIij = y < height - 1 ? getPixel(x, y + 1)
+						- oldValueIJ : 0;
+				double DoIij = y > 0 ? getPixel(x, y - 1)
+						- oldValueIJ : 0;
+
+				double Cnij = bd.g(DnIij);
+				double Csij = bd.g(DsIij);
+				double Ceij = bd.g(DeIij);
+				double Coij = bd.g(DoIij);
+
+				double DnIijCnij = DnIij * Cnij;
+				double DsIijCsij = DsIij * Csij;
+				double DeIijCeij = DeIij * Ceij;
+				double DoIijCoij = DoIij * Coij;
+
+				double lambda = 0.25;
+				double newValueIJ = oldValueIJ + lambda
+						* (DnIijCnij + DsIijCsij + DeIijCeij + DoIijCoij);
+				newChannel.setPixel(x, y, newValueIJ);
+			}
+		}
+		return newChannel;
+	}
 }

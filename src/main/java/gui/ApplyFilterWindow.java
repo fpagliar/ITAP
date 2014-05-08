@@ -166,23 +166,31 @@ public class ApplyFilterWindow {
 	}
 
 	private void applyFilter() {
-		Color[] filteredValues = new Color[captureRect.width
-				* captureRect.height];
+//		Color[] filteredValues = new Color[captureRect.width
+//				* captureRect.height];
 		int i = 0;
 		for (int x = captureRect.x; x < captureRect.x + captureRect.width; x++)
 			for (int y = captureRect.y; y < captureRect.y + captureRect.height; y++) {
-				if (type == 1)
-					filteredValues[i++] = image.applyMeanFilter(x, y, size);
-				else if(type == 2)
-					filteredValues[i++] = image.applyMedianFilter(x, y, size);
-				else 
-					filteredValues[i++] = image.applyGaussianFilter(x, y, size, sigma);
+				if(!points.containsKey(new Point(x,y))){
+					if (type == 1)
+						points.put(new Point(x,y), image.applyMeanFilter(x, y, size));
+					else if(type == 2)
+						points.put(new Point(x,y), image.applyMedianFilter(x, y, size));
+					else 
+						points.put(new Point(x,y), image.applyGaussianFilter(x, y, size, sigma));					
+//					if (type == 1)
+//						filteredValues[i++] = image.applyMeanFilter(x, y, size);
+//					else if(type == 2)
+//						filteredValues[i++] = image.applyMedianFilter(x, y, size);
+//					else 
+//						filteredValues[i++] = image.applyGaussianFilter(x, y, size, sigma);
+				}
 			}
 
-		i = 0;
-		for (int x = captureRect.x; x < captureRect.x + captureRect.width; x++)
-			for (int y = captureRect.y; y < captureRect.y + captureRect.height; y++)
-				points.put(new Point(x, y),  filteredValues[i++]);
-//				image.setPixel(x, y, filteredValues[i++]);
+//		i = 0;
+//		for (int x = captureRect.x; x < captureRect.x + captureRect.width; x++)
+//			for (int y = captureRect.y; y < captureRect.y + captureRect.height; y++)
+//				points.put(new Point(x, y),  filteredValues[i++]);
+////				image.setPixel(x, y, filteredValues[i++]);
 	}
 }
