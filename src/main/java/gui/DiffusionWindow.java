@@ -9,26 +9,19 @@ import javax.swing.JPanel;
 import model.BorderDetector;
 import model.Image;
 
-public class IsotropicDiffusionWindow extends JFrame {
+public class DiffusionWindow extends JFrame {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public IsotropicDiffusionWindow(Image image){
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public DiffusionWindow(Image image, BorderDetector bd){
+//		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
-		setBounds(1, 1, 1800, 800);
-		setResizable(false);
+		setBounds(1, 1, 1800, 1000);
+		setResizable(true);
 	
-		BorderDetector bd = new BorderDetector() {
-			
-			public double g(double x) {
-				// TODO Auto-generated method stub
-				return 1;
-			}
-		};
 		//Original
 		JPanel panel1 = new ImagePanel(image);
 		image = image.clone();
@@ -39,10 +32,10 @@ public class IsotropicDiffusionWindow extends JFrame {
 		image.applyAnisotropicDiffusion(bd);
 		image.applyAnisotropicDiffusion(bd);
 		image.applyAnisotropicDiffusion(bd);
-		image.applyAnisotropicDiffusion(bd);
-		//5rd iteration
+		//4rd iteration
 		JPanel panel3 = new ImagePanel(image);
 		image = image.clone();
+		image.applyAnisotropicDiffusion(bd);
 		image.applyAnisotropicDiffusion(bd);
 		image.applyAnisotropicDiffusion(bd);
 		image.applyAnisotropicDiffusion(bd);

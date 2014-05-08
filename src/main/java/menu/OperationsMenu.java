@@ -5,6 +5,7 @@ import gui.Window;
 import javax.swing.JMenu;
 
 import menu.item.operations.AddImagesMenuItem;
+import menu.item.operations.AnisotropicDiffusionMenu;
 import menu.item.operations.ApplyFilterMenu;
 import menu.item.operations.ApplyNoiseMenu;
 import menu.item.operations.ApplyThresholdMenuItem;
@@ -36,6 +37,7 @@ public class OperationsMenu extends JMenu {
 		this.add(new ApplyNoiseMenu(window));
 		this.add(new ApplyFilterMenu(window));
 		this.add(new IsotropicDiffusionMenuItem(window));
+		this.add(new AnisotropicDiffusionMenu(window));
 		this.add(new BorderDetectionMenu(window));
 	}
 }

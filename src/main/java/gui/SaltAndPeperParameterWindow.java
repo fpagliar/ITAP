@@ -62,7 +62,6 @@ public class SaltAndPeperParameterWindow extends JFrame implements
 			double p0Value = Double.parseDouble(p0.getText());
 			double p1Value = Double.parseDouble(p1.getText());
 			double percentageValue = Double.parseDouble(percentage.getText());
-			System.out.println(percentageValue);
 			window.getUnfocusedPanel().setImage(
 					window.getFocusedPanel().getImage().clone());
 			window.getUnfocusedPanel().getImage()
