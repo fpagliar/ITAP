@@ -4,6 +4,7 @@ import gui.Window;
 
 import javax.swing.JMenu;
 
+import menu.item.operations.filters.GaussianFIlterMenuItem;
 import menu.item.operations.filters.MeanFilterMenuItem;
 import menu.item.operations.filters.MedianFilterMenuItem;
 
@@ -17,5 +18,6 @@ public class ApplyFilterMenu extends JMenu {
 		
 		this.add(new MeanFilterMenuItem(window));
 		this.add(new MedianFilterMenuItem(window));
+		this.add(new GaussianFIlterMenuItem(window));
 	}
 }

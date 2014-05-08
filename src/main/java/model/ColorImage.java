@@ -5,11 +5,7 @@ import gui.ErrorWindow;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import utils.RandomNumberGenerator;
 
@@ -294,7 +290,7 @@ public class ColorImage implements Image, Cloneable {
 				Color newColor = (pixelColor < value) ? Color.WHITE
 						: Color.BLACK;
 				// Red green and blue are the same if it is grayscale
-				//TODO: should this be available for color images?
+				// TODO: should this be available for color images?
 				red.setPixel(x, y, newColor.getRed());
 				green.setPixel(x, y, newColor.getGreen());
 				blue.setPixel(x, y, newColor.getBlue());
@@ -391,6 +387,59 @@ public class ColorImage implements Image, Cloneable {
 		return new Color((int) valueR, (int) valueG, (int) valueB);
 	}
 
+	public Color applyGaussianFilter(int pixelX, int pixelY, int rectangleSide,
+			double sigma) {
+		 if (rectangleSide % 2 == 0) {
+			 rectangleSide++;
+		 }
+		// Mask mask = new Mask(size);
+		double rTotal = 0;
+		double gTotal = 0;
+		double bTotal = 0;
+		for (int x = pixelX - rectangleSide / 2; x <= pixelX + rectangleSide / 2; x++)
+			for (int y = pixelY - rectangleSide / 2; y <= pixelY + rectangleSide
+					/ 2; y++) {
+				double relativeX = pixelX - x;
+				double relativeY = pixelY - y;
+				
+				double gaussianFunction = (1.0 / (2.0 * Math.PI * Math.pow(
+						sigma, 2)))
+						* Math.exp(-((Math.pow(relativeX, 2) + Math.pow(relativeY, 2)) / (Math
+								.pow(sigma, 2))));
+//				double gaussianFunction = (1.0 / (2.0 * Math.PI * Math.pow(
+//						sigma, 2)))
+//						* Math.exp(-((Math.pow(x, 2) + Math.pow(y, 2)) / (Math
+//								.pow(sigma, 2))));
+				// System.out.println("pi pow:"
+				// + (2.0 * Math.PI * Math.pow(sigma, 2)));
+				// System.out.println("1/pipow: "
+				// + (1.0 / (2.0 * Math.PI * Math.pow(sigma, 2))));
+//				System.out.println("pows:" + (Math.pow(x, 2) + Math.pow(y, 2)));
+//				System.out.println("sigma pow:" + (Math.pow(sigma, 2)));
+//				System.out.println("function:" + gaussianFunction);
+				try{
+					rTotal += getRGBPixel(x, y).getRed() * gaussianFunction * 2;
+					gTotal += getRGBPixel(x, y).getGreen() * gaussianFunction * 2;
+					bTotal += getRGBPixel(x, y).getBlue() * gaussianFunction * 2;
+				} catch (IndexOutOfBoundsException e) {
+					// Ignore
+				}
+				// total += gaussianFunction * getP;
+				// mask.setPixel(i, j, gaussianFunction);
+			}
+		// for (int i = -mask.getWidth() / 2; i <= mask.getWidth() / 2; i++) {
+		// for (int j = -mask.getHeight() / 2; j <= mask.getHeight() / 2; j++) {
+		// double oldPixel = mask.getValue(i, j);
+		// mask.setPixel(i, j, oldPixel / total);
+		// }
+		// }
+		// System.out.println("TOTAL:" + total);
+		// return new Color((int) (getRGBPixel(pixelX, pixelY).getRGB() /
+		// total));
+//		return new Color((int) (rTotal*total), (int) (gTotal*total), (int) (bTotal*total));
+		return new Color((int) (rTotal), (int) (gTotal), (int) (bTotal));
+	}
+
 	public Color applyMedianFilter(int pixelX, int pixelY, int rectangleSide) {
 		// TODO: check if it should send out of bounds exception?
 		if (pixelX < 0 || pixelX > getWidth() || pixelY < 0
@@ -430,14 +479,12 @@ public class ColorImage implements Image, Cloneable {
 		Arrays.sort(gValues);
 		Arrays.sort(bValues);
 
-		
 		if (length % 2 != 0) {
 			// Ex If length is 5, the index is 2 (0,1,2,3,4)
 			return new Color((int) rValues[length / 2],
 					(int) gValues[length / 2], (int) bValues[length / 2]);
-		} else if( length == 2){
-			return new Color(
-					(int) (rValues[0] + rValues[1]) / 2,
+		} else if (length == 2) {
+			return new Color((int) (rValues[0] + rValues[1]) / 2,
 					(int) (gValues[0] + gValues[1]) / 2,
 					(int) (bValues[0] + bValues[1]) / 2);
 		} else {

@@ -30,13 +30,18 @@ public class ApplyFilterWindow {
 	private Map<Point, Color> points = new HashMap<Point, Color>();
 	private int size;
 	private int type;
+	private double sigma;
 
 	// TYPE = 1 for mean
-	public ApplyFilterWindow(final Image image, int size, int type) {
+	// TYPE = 2 for median
+	// TYPE = 3 for gaussian
+	//SIGMA IS ONLY USED IN GAUSSIAN MODE
+	public ApplyFilterWindow(final Image image, int size, double sigma, int type) {
 		ApplyFilterWindow.image = image;
 		this.size = size;
 		this.type = type;
-
+		this.sigma = sigma;
+		
 		final BufferedImage bufferedImage = image.getImage();
 		final BufferedImage screenCopy = new BufferedImage(
 				bufferedImage.getWidth(), bufferedImage.getHeight(),
@@ -168,8 +173,10 @@ public class ApplyFilterWindow {
 			for (int y = captureRect.y; y < captureRect.y + captureRect.height; y++) {
 				if (type == 1)
 					filteredValues[i++] = image.applyMeanFilter(x, y, size);
-				else
+				else if(type == 2)
 					filteredValues[i++] = image.applyMedianFilter(x, y, size);
+				else 
+					filteredValues[i++] = image.applyGaussianFilter(x, y, size, sigma);
 			}
 
 		i = 0;

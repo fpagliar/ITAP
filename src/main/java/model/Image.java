@@ -104,4 +104,5 @@ public interface Image {
 
 	public Color applyMeanFilter(int pixelX, int pixelY, int rectangleSide);
 	public Color applyMedianFilter(int pixelX, int pixelY, int rectangleSide);
+	public Color applyGaussianFilter(int pixelX, int pixelY, int rectangleSide, double sigma);
 }
