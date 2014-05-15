@@ -145,12 +145,15 @@ public class ApplyFilterWindow {
 			}
 		});
 
-		JOptionPane.showMessageDialog(null, panel);
-		Image filteredCopy = image.clone(); 
-		for(Point p : points.keySet())
-			filteredCopy.setPixel(p.x, p.y, points.get(p));
-		window.getUnfocusedPanel().setImage(filteredCopy);
-		window.repaint();
+//		JOptionPane.showMessageDialog(null, panel);
+		int selection = JOptionPane.showConfirmDialog(null, panel);
+		if(selection == 0){
+			Image filteredCopy = image.clone(); 
+			for(Point p : points.keySet())
+				filteredCopy.setPixel(p.x, p.y, points.get(p));
+			window.getUnfocusedPanel().setImage(filteredCopy);
+			window.repaint();
+		}
 		points = new HashMap<Point, Color>();
 	}
 

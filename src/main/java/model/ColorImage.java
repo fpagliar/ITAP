@@ -318,15 +318,18 @@ public class ColorImage implements Image, Cloneable {
 	public void rayleighNoise(double epsilon) {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
-				double noise = RandomNumberGenerator.rayleigh(epsilon);
-				// f(i,j) = s(i,j) + n(i,j) --- s is the image, n is the noise
-				// n(i,j) = s(i,j) * yk ------- yk is the rayleigh variable
-				red.setPixel(x, y, red.getPixel(x, y) + red.getPixel(x, y)
-						* noise);
-				green.setPixel(x, y,
-						green.getPixel(x, y) + green.getPixel(x, y) * noise);
-				blue.setPixel(x, y, blue.getPixel(x, y) + blue.getPixel(x, y)
-						* noise);
+				double random = Math.random();
+				if(random*100 < 20){
+					double noise = RandomNumberGenerator.rayleigh(epsilon);
+					// f(i,j) = s(i,j) + n(i,j) --- s is the image, n is the noise
+					// n(i,j) = s(i,j) * yk ------- yk is the rayleigh variable
+					red.setPixel(x, y, red.getPixel(x, y) + red.getPixel(x, y)
+							* noise);
+					green.setPixel(x, y,
+							green.getPixel(x, y) + green.getPixel(x, y) * noise);
+					blue.setPixel(x, y, blue.getPixel(x, y) + blue.getPixel(x, y)
+							* noise);
+				}
 			}
 		}
 	}

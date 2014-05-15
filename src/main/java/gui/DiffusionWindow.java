@@ -40,7 +40,6 @@ public class DiffusionWindow extends JFrame {
 		image.applyAnisotropicDiffusion(bd);
 		image.applyAnisotropicDiffusion(bd);
 		image.applyAnisotropicDiffusion(bd);
-		image.applyAnisotropicDiffusion(bd);
 		//10th iteration
 		JPanel panel4 = new ImagePanel(image);
 

@@ -244,10 +244,10 @@ public class Channel implements Cloneable {
 			for (int y = 1; y <= chnls.length; y++) {
 				colors[y] = chnls[y - 1].channel[x];
 			}
-			//AVG
+			//MODULE (works better than avg)
 			for(double d: colors)
-				result[x] += d;
-			result[x] /= 2;
+				result[x] += Math.pow(d, 2);
+			result[x] = Math.sqrt(result[x]);
 		}
 		this.channel = result;
 	}

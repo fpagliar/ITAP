@@ -2,7 +2,6 @@ package utils;
 
 public class MaskFactory {
 
-
 	public static Mask[] robertsMask() {
 		int size = 3;
 		Mask[] array = new Mask[2];
@@ -29,20 +28,19 @@ public class MaskFactory {
 		array[0] = dx;
 		array[1] = dy;
 
-		dx.setPixel(-1, -1, -1);
-		dx.setPixel(-1, 0, -1);
-		dx.setPixel(-1, 1, -1);
+		dx.setPixel(-1, -1, -1);  //
+		dx.setPixel(-1, 0, -1);   //  | -1 -1 -1 | 
+		dx.setPixel(-1, 1, -1);   //  |  0  0  0 |
+		dx.setPixel(1, -1, 1);    //  |  1  1  1 |
+		dx.setPixel(1, 0, 1);     //
+		dx.setPixel(1, 1, 1);     //
 
-		dx.setPixel(1, -1, 1);
-		dx.setPixel(1, 0, 1);
-		dx.setPixel(1, 1, 1);
-
-		dy.setPixel(-1, -1, -1);
-		dy.setPixel(0, -1, -1);
-		dy.setPixel(1, -1, -1);
-		dy.setPixel(-1, 1, 1);
-		dy.setPixel(0, 1, 1);
-		dy.setPixel(1, 1, 1);
+		dy.setPixel(-1, -1, -1);  // 
+		dy.setPixel(0, -1, -1);   //  | -1  0  1 |
+		dy.setPixel(1, -1, -1);   //  | -1  0  1 |
+		dy.setPixel(-1, 1, 1);    //  | -1  0  1 |
+		dy.setPixel(0, 1, 1);     //
+		dy.setPixel(1, 1, 1);     //
 
 		return array;
 	}
@@ -55,20 +53,19 @@ public class MaskFactory {
 		array[0] = dx;
 		array[1] = dy;
 		
-		dx.setPixel(-1, -1, -1);
-		dx.setPixel(-1, 0, -2);
-		dx.setPixel(-1, 1, -1);
-		
-		dx.setPixel(1, -1, 1);
-		dx.setPixel(1, 0, 2);
-		dx.setPixel(1, 1, 1);
+		dx.setPixel(-1, -1, -1); //
+		dx.setPixel(-1, 0, -3);  //  | -1 -2 -1 |
+		dx.setPixel(-1, 1, -1);  //  |  0  0  0 |
+		dx.setPixel(1, -1, 1);   //  |  1  2  1 |
+		dx.setPixel(1, 0, 3);    //
+		dx.setPixel(1, 1, 1);    //
 
-		dy.setPixel(-1, -1, -1);
-		dy.setPixel(0, -1, -2);
-		dy.setPixel(1, -1, -1);
-		dy.setPixel(-1, 1, 1);
-		dy.setPixel(0, 1, 2);
-		dy.setPixel(1, 1, 1);
+		dy.setPixel(-1, -1, -1); //
+		dy.setPixel(0, -1, -3);  //  | -1  0  1 |
+		dy.setPixel(1, -1, -1);  //  | -2  0  2 |
+		dy.setPixel(-1, 1, 1);   //  | -1  0  1 |
+		dy.setPixel(0, 1, 3);    //
+		dy.setPixel(1, 1, 1);    //
 
 		return array;
 	}
