@@ -111,4 +111,6 @@ public interface Image {
 	public void applyMask(Mask mask);
 	public void applyMasksAndSynth(Mask[] maskArray);
 	public void synthesize(Image... imgs);
+	public void contrast(double r1, double r2, double y1, double y2);
+
 }

@@ -136,8 +136,9 @@ public class Channel implements Cloneable {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				double color = this.getPixel(x, y);
-				//T(r) = -r + L - 1 -- (L - 1 is represented by MAX_CHANNEL_COLOR)
-				this.setPixel(x, y, - color + MAX_CHANNEL_COLOR);
+				// T(r) = -r + L - 1 -- (L - 1 is represented by
+				// MAX_CHANNEL_COLOR)
+				this.setPixel(x, y, -color + MAX_CHANNEL_COLOR);
 			}
 		}
 	}
@@ -153,7 +154,7 @@ public class Channel implements Cloneable {
 		}
 		return newChannel;
 	}
-	
+
 	public void dynamicRangeCompression(double R) {
 		double L = MAX_CHANNEL_COLOR;
 		double c = (L - 1) / Math.log(1 + R);
@@ -165,9 +166,10 @@ public class Channel implements Cloneable {
 			}
 		}
 	}
-	
+
 	/**
 	 * Applies one iteration of anisotropic diffusion.
+	 * 
 	 * @param bd
 	 * @return
 	 */
@@ -177,14 +179,12 @@ public class Channel implements Cloneable {
 			for (int y = 0; y < height; y++) {
 				double oldValueIJ = getPixel(x, y);
 
-				double DnIij = x > 0 ? getPixel(x - 1, y)
-						- oldValueIJ : 0;
-				double DsIij = x < width - 1 ? getPixel(x + 1, y)
-						- oldValueIJ : 0;
-				double DeIij = y < height - 1 ? getPixel(x, y + 1)
-						- oldValueIJ : 0;
-				double DoIij = y > 0 ? getPixel(x, y - 1)
-						- oldValueIJ : 0;
+				double DnIij = x > 0 ? getPixel(x - 1, y) - oldValueIJ : 0;
+				double DsIij = x < width - 1 ? getPixel(x + 1, y) - oldValueIJ
+						: 0;
+				double DeIij = y < height - 1 ? getPixel(x, y + 1) - oldValueIJ
+						: 0;
+				double DoIij = y > 0 ? getPixel(x, y - 1) - oldValueIJ : 0;
 
 				double Cnij = bd.g(DnIij);
 				double Csij = bd.g(DsIij);
@@ -204,8 +204,7 @@ public class Channel implements Cloneable {
 		}
 		return newChannel;
 	}
-	
-	
+
 	public void applyMask(Mask mask) {
 		Channel newChannel = new Channel(this.width, this.height);
 		for (int x = 0; x < width; x++) {
@@ -216,7 +215,7 @@ public class Channel implements Cloneable {
 		}
 		this.channel = newChannel.channel;
 	}
-	
+
 	private double applyMask(int pointX, int pointY, Mask mask) {
 		double newColor = 0;
 		for (int x = -mask.getWidth() / 2; x <= mask.getWidth() / 2; x++) {
@@ -227,14 +226,14 @@ public class Channel implements Cloneable {
 						oldColor = this.getPixel(pointX + x, pointY + y);
 						newColor += oldColor * mask.getValue(x, y);
 					} catch (IndexOutOfBoundsException e) {
-//						newColor += oldColor * mask.getValue(x, y);
+						// newColor += oldColor * mask.getValue(x, y);
 					}
 				}
 			}
 		}
 		return newColor;
 	}
-	
+
 	public void synthesize(Channel... chnls) {
 		double[] result = new double[width * height];
 
@@ -244,11 +243,54 @@ public class Channel implements Cloneable {
 			for (int y = 1; y <= chnls.length; y++) {
 				colors[y] = chnls[y - 1].channel[x];
 			}
-			//MODULE (works better than avg)
-			for(double d: colors)
+			// MODULE (works better than avg)
+			for (double d : colors)
 				result[x] += Math.pow(d, 2);
 			result[x] = Math.sqrt(result[x]);
 		}
 		this.channel = result;
 	}
+
+	/**
+	 * @param r1
+	 *            - The lower boundary
+	 * @param r2
+	 *            - The higher boundary
+	 * @param y1
+	 *            - The new value for the lower boundary
+	 * @param y2
+	 *            - The new value for the higher boundary
+	 */
+	public void contrast(double r1, double r2, double y1, double y2) {
+		// Primera recta - antes de r1
+		double m1 = y1 / r1;
+		double b1 = 0;
+
+		// Recta del medio - entre r1 y r2
+		double m = (y2 - y1) / (r2 - r1);
+		// when r = r1, y = y1; y1 = m*r1 + b
+		double b = y1 - m * r1;
+
+		// Ultima recta - de r2 hacia arriba
+		double m2 = (MAX_CHANNEL_COLOR - y2) / (MAX_CHANNEL_COLOR - r2);
+		// when r = r2, y = y2 ; y2 = m * r2 + b
+		double b2 = y2 - m * r2;
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				double r = this.getPixel(x, y);
+				double f = 0;
+				if (r < r1) {
+					f = m1 * r + b1;
+				} else if (r > r2) {
+					f = m2 * r + b2;
+				} else {
+					f = m * r + b;
+					f = (f > MAX_CHANNEL_COLOR) ? MAX_CHANNEL_COLOR : f;
+				}
+				this.setPixel(x, y, f);
+			}
+		}
+	}
+
 }

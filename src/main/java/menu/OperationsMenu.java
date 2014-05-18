@@ -11,6 +11,7 @@ import menu.item.operations.ApplyNoiseMenu;
 import menu.item.operations.ApplyThresholdMenuItem;
 import menu.item.operations.BorderDetectionMenu;
 import menu.item.operations.DynamicRangeCompressionMenuItem;
+import menu.item.operations.IncreaseContrastMenuItem;
 import menu.item.operations.IsotropicDiffusionMenuItem;
 import menu.item.operations.MultiplyImagesMenuItem;
 import menu.item.operations.NegativeMenuItem;
@@ -31,6 +32,7 @@ public class OperationsMenu extends JMenu {
 		this.add(new MultiplyImagesMenuItem(window));
 		this.add(new ScalarProductMenuItem(window));
 		this.add(new ToGrayscaleMenuItem(window));
+		this.add(new IncreaseContrastMenuItem(window));
 		this.add(new DynamicRangeCompressionMenuItem(window));
 		this.add(new NegativeMenuItem(window));
 		this.add(new ApplyThresholdMenuItem(window));

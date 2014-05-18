@@ -541,5 +541,11 @@ public class ColorImage implements Image, Cloneable {
 		this.green.synthesize(greenChnls);
 		this.blue.synthesize(blueChnls);
 	}
+	
+	public void contrast(double r1, double r2, double y1, double y2) {
+		red.contrast(r1, r2, y1, y2);
+		green.contrast(r1, r2, y1, y2);
+		blue.contrast(r1, r2, y1, y2);
+	}
 
 }
