@@ -8,7 +8,7 @@ import menu.item.file.CalculateAverageColor;
 import menu.item.file.CopyImageSelectionMenuItem;
 import menu.item.file.CreateCircleMenuItem;
 import menu.item.file.CreateSquareMenuItem;
-import menu.item.file.LoadImageMenuItem;
+import menu.item.file.LoadImageMenu;
 import menu.item.file.PasteImageSelectionMenuItem;
 import menu.item.file.SaveImageMenuItem;
 
@@ -20,7 +20,7 @@ public class FileMenu extends JMenu {
 		super("File");
 		this.setEnabled(true);
 
-		this.add(new LoadImageMenuItem(window));
+		this.add(new LoadImageMenu(window));
 		this.add(new SaveImageMenuItem(window));
 		this.add(new CopyImageSelectionMenuItem(window));
 		this.add(new PasteImageSelectionMenuItem(window));

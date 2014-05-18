@@ -14,7 +14,7 @@ import javax.swing.JMenuItem;
 import model.Image;
 import utils.ImageManager;
 
-public class LoadImageMenuItem extends JMenuItem {
+public class LoadFormattedMenuItem extends JMenuItem {
 
 	/**
 	 * 
@@ -22,9 +22,9 @@ public class LoadImageMenuItem extends JMenuItem {
 	private static final long serialVersionUID = 1L;
 	
 	
-	public LoadImageMenuItem(final Window window)
+	public LoadFormattedMenuItem(final Window window)
 	{
-		super("Load image");
+		super("Formatted Image");
 		
 		this.addActionListener(new ActionListener() {
 	
