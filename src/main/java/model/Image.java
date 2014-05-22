@@ -1,8 +1,10 @@
 package model;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.Set;
 
 import utils.Mask;
 
@@ -112,5 +114,8 @@ public interface Image {
 	public void applyMasksAndSynth(Mask[] maskArray);
 	public void synthesize(Image... imgs);
 	public void contrast(double r1, double r2, double y1, double y2);
+	public Set<Point> getWhites();
+	public Set<Point> getBlacks();
+	public double getGlobalThreshold();
 
 }

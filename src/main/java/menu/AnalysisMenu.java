@@ -4,6 +4,7 @@ import gui.Window;
 
 import javax.swing.JMenu;
 
+import menu.item.analysis.GlobalThresholdMenuItem;
 import menu.item.analysis.HistogramMenuItem;
 
 public class AnalysisMenu extends JMenu {
@@ -15,5 +16,6 @@ public class AnalysisMenu extends JMenu {
 		this.setEnabled(true);
 
 		this.add(new HistogramMenuItem(window));
+		this.add(new GlobalThresholdMenuItem(window));
 	}
 }

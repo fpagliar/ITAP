@@ -3,9 +3,14 @@ package model;
 import gui.ErrorWindow;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.xuggle.xuggler.Global;
 
 import utils.Mask;
 import utils.RandomNumberGenerator;
@@ -283,7 +288,6 @@ public class ColorImage implements Image, Cloneable {
 		return other;
 	}
 
-	// TODO: fix this! Not working
 	public void applyThreshold(double value) {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
@@ -319,16 +323,17 @@ public class ColorImage implements Image, Cloneable {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
 				double random = Math.random();
-				if(random*100 < 20){
+				if (random * 100 < 20) {
 					double noise = RandomNumberGenerator.rayleigh(epsilon);
-					// f(i,j) = s(i,j) + n(i,j) --- s is the image, n is the noise
+					// f(i,j) = s(i,j) + n(i,j) --- s is the image, n is the
+					// noise
 					// n(i,j) = s(i,j) * yk ------- yk is the rayleigh variable
 					red.setPixel(x, y, red.getPixel(x, y) + red.getPixel(x, y)
 							* noise);
 					green.setPixel(x, y,
 							green.getPixel(x, y) + green.getPixel(x, y) * noise);
-					blue.setPixel(x, y, blue.getPixel(x, y) + blue.getPixel(x, y)
-							* noise);
+					blue.setPixel(x, y,
+							blue.getPixel(x, y) + blue.getPixel(x, y) * noise);
 				}
 			}
 		}
@@ -353,7 +358,7 @@ public class ColorImage implements Image, Cloneable {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
 				double random = Math.random();
-				if(random*100 < percentage){
+				if (random * 100 < percentage) {
 					random = RandomNumberGenerator.uniform(0, 1);
 					if (random <= po) {
 						red.setPixel(x, y, Channel.MIN_CHANNEL_COLOR);
@@ -396,38 +401,42 @@ public class ColorImage implements Image, Cloneable {
 
 	public Color applyGaussianFilter(int pixelX, int pixelY, int rectangleSide,
 			double sigma) {
-		 if (rectangleSide % 2 == 0) {
-			 rectangleSide++;
-		 }
+		if (rectangleSide % 2 == 0) {
+			rectangleSide++;
+		}
 		// Mask mask = new Mask(size);
 		double rTotal = 0;
 		double gTotal = 0;
 		double bTotal = 0;
-		for (int x = pixelX - rectangleSide / 2; x <= pixelX + rectangleSide / 2; x++)
-			for (int y = pixelY - rectangleSide / 2; y <= pixelY + rectangleSide
-					/ 2; y++) {
+		for (int x = pixelX - rectangleSide / 2; x <= pixelX + rectangleSide
+				/ 2; x++)
+			for (int y = pixelY - rectangleSide / 2; y <= pixelY
+					+ rectangleSide / 2; y++) {
 				double relativeX = pixelX - x;
 				double relativeY = pixelY - y;
-				
+
 				double gaussianFunction = (1.0 / (2.0 * Math.PI * Math.pow(
 						sigma, 2)))
-						* Math.exp(-((Math.pow(relativeX, 2) + Math.pow(relativeY, 2)) / (Math
-								.pow(sigma, 2))));
-//				double gaussianFunction = (1.0 / (2.0 * Math.PI * Math.pow(
-//						sigma, 2)))
-//						* Math.exp(-((Math.pow(x, 2) + Math.pow(y, 2)) / (Math
-//								.pow(sigma, 2))));
+						* Math.exp(-((Math.pow(relativeX, 2) + Math.pow(
+								relativeY, 2)) / (Math.pow(sigma, 2))));
+				// double gaussianFunction = (1.0 / (2.0 * Math.PI * Math.pow(
+				// sigma, 2)))
+				// * Math.exp(-((Math.pow(x, 2) + Math.pow(y, 2)) / (Math
+				// .pow(sigma, 2))));
 				// System.out.println("pi pow:"
 				// + (2.0 * Math.PI * Math.pow(sigma, 2)));
 				// System.out.println("1/pipow: "
 				// + (1.0 / (2.0 * Math.PI * Math.pow(sigma, 2))));
-//				System.out.println("pows:" + (Math.pow(x, 2) + Math.pow(y, 2)));
-//				System.out.println("sigma pow:" + (Math.pow(sigma, 2)));
-//				System.out.println("function:" + gaussianFunction);
-				try{
+				// System.out.println("pows:" + (Math.pow(x, 2) + Math.pow(y,
+				// 2)));
+				// System.out.println("sigma pow:" + (Math.pow(sigma, 2)));
+				// System.out.println("function:" + gaussianFunction);
+				try {
 					rTotal += getRGBPixel(x, y).getRed() * gaussianFunction * 2;
-					gTotal += getRGBPixel(x, y).getGreen() * gaussianFunction * 2;
-					bTotal += getRGBPixel(x, y).getBlue() * gaussianFunction * 2;
+					gTotal += getRGBPixel(x, y).getGreen() * gaussianFunction
+							* 2;
+					bTotal += getRGBPixel(x, y).getBlue() * gaussianFunction
+							* 2;
 				} catch (IndexOutOfBoundsException e) {
 					// Ignore
 				}
@@ -443,7 +452,8 @@ public class ColorImage implements Image, Cloneable {
 		// System.out.println("TOTAL:" + total);
 		// return new Color((int) (getRGBPixel(pixelX, pixelY).getRGB() /
 		// total));
-//		return new Color((int) (rTotal*total), (int) (gTotal*total), (int) (bTotal*total));
+		// return new Color((int) (rTotal*total), (int) (gTotal*total), (int)
+		// (bTotal*total));
 		return new Color((int) (rTotal), (int) (gTotal), (int) (bTotal));
 	}
 
@@ -502,30 +512,30 @@ public class ColorImage implements Image, Cloneable {
 					(int) (bValues[length / 2] + bValues[length / 2 + 1]) / 2);
 		}
 	}
-	
+
 	public void applyAnisotropicDiffusion(BorderDetector bd) {
 		red = this.red.applyAnisotropicDiffusion(bd);
 		green = this.green.applyAnisotropicDiffusion(bd);
 		blue = this.blue.applyAnisotropicDiffusion(bd);
 	}
-	
+
 	public void applyMask(Mask mask) {
 		this.red.applyMask(mask);
 		this.green.applyMask(mask);
 		this.blue.applyMask(mask);
 	}
-	
+
 	public void applyMasksAndSynth(Mask[] maskArray) {
 		Image copy = clone();
 
 		this.applyMask(maskArray[0]);
-		if(maskArray.length == 2){
+		if (maskArray.length == 2) {
 			copy.applyMask(maskArray[1]);
-	
+
 			this.synthesize(copy);
 		}
 	}
-	
+
 	public void synthesize(Image... imgs) {
 		Image[] cimgs = imgs;
 
@@ -543,11 +553,71 @@ public class ColorImage implements Image, Cloneable {
 		this.green.synthesize(greenChnls);
 		this.blue.synthesize(blueChnls);
 	}
-	
+
 	public void contrast(double r1, double r2, double y1, double y2) {
 		red.contrast(r1, r2, y1, y2);
 		green.contrast(r1, r2, y1, y2);
 		blue.contrast(r1, r2, y1, y2);
 	}
 
+	public double getGlobalThreshold() {
+		double actualThreshold = 255 / 2, previousThreshold = 0;
+		double previousDeltaT = 500, deltaT = 0;
+		double epsilon = 0.00001;
+		Image other;
+		int iterations = 0;
+		while (Math.abs(deltaT - previousDeltaT) > epsilon) {
+			other = this.clone();
+			other.applyThreshold(actualThreshold);
+			Set<Point> whites = other.getWhites(), blacks = other.getBlacks();
+
+			double m1 = 0;
+			for (Point p : whites) {
+				m1 += this.red.getPixel(p.x, p.y);
+				if (this.red.getPixel(p.x, p.y) > 255)
+					throw new RuntimeException();
+			}
+			m1 /= whites.size();
+
+			double m2 = 0;
+			for (Point p : blacks) {
+				m2 += this.red.getPixel(p.x, p.y);
+				if (this.red.getPixel(p.x, p.y) > 255)
+					throw new RuntimeException();
+			}
+			m2 /= blacks.size();
+
+			previousDeltaT = deltaT;
+			previousThreshold = actualThreshold;
+			actualThreshold = 0.5 * (m1 + m2);
+			deltaT = actualThreshold - previousThreshold;
+			System.out.println("DeltaT:" + deltaT + " T:" + actualThreshold
+					+ " previous T:" + previousThreshold);
+			iterations++;
+		}
+		System.out.println("Iterations:" + iterations);
+		return actualThreshold;
+	}
+
+	public Set<Point> getWhites() {
+		Set<Point> points = new HashSet<Point>();
+		for (int x = 0; x < getWidth(); x++)
+			for (int y = 0; y < getHeight(); y++)
+				if (red.getPixel(x, y) == Color.WHITE.getRed()
+						&& green.getPixel(x, y) == Color.WHITE.getGreen()
+						&& blue.getPixel(x, y) == Color.WHITE.getBlue())
+					points.add(new Point(x, y));
+		return points;
+	}
+
+	public Set<Point> getBlacks() {
+		Set<Point> points = new HashSet<Point>();
+		for (int x = 0; x < getWidth(); x++)
+			for (int y = 0; y < getHeight(); y++)
+				if (red.getPixel(x, y) == Color.BLACK.getRed()
+						&& green.getPixel(x, y) == Color.BLACK.getGreen()
+						&& blue.getPixel(x, y) == Color.BLACK.getBlue())
+					points.add(new Point(x, y));
+		return points;
+	}
 }
