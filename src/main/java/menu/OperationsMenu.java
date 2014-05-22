@@ -4,12 +4,12 @@ import gui.Window;
 
 import javax.swing.JMenu;
 
+import menu.item.mask.BorderDetectionMenu;
 import menu.item.operations.AddImagesMenuItem;
 import menu.item.operations.AnisotropicDiffusionMenu;
 import menu.item.operations.ApplyFilterMenu;
 import menu.item.operations.ApplyNoiseMenu;
 import menu.item.operations.ApplyThresholdMenuItem;
-import menu.item.operations.BorderDetectionMenu;
 import menu.item.operations.DynamicRangeCompressionMenuItem;
 import menu.item.operations.IncreaseContrastMenuItem;
 import menu.item.operations.IsotropicDiffusionMenuItem;

@@ -1,4 +1,4 @@
-package menu.item.operations.borderdetection;
+package menu.item.mask.borderdetection;
 
 import gui.Window;
 
@@ -10,12 +10,12 @@ import javax.swing.JMenuItem;
 import model.Image;
 import utils.MaskFactory;
 
-public class PrewittMenuItem  extends JMenuItem {
+public class SobelBorderMenuItem extends JMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-	public PrewittMenuItem(final Window window) {
-		super("Prewitt");
+	public SobelBorderMenuItem(final Window window) {
+		super("Sobel");
 
 		setEnabled(true);
 
@@ -23,7 +23,7 @@ public class PrewittMenuItem  extends JMenuItem {
 
 			public void actionPerformed(ActionEvent e) {
 				Image result = window.getFocusedPanel().getImage().clone();
-				result.applyMasksAndSynth(MaskFactory.prewittMask());
+				result.applyMasksAndSynth(MaskFactory.sobelBorderMask());
 
 				window.getUnfocusedPanel().setImage(result);
 				window.repaint();
@@ -31,4 +31,3 @@ public class PrewittMenuItem  extends JMenuItem {
 		});
 	}
 }
-

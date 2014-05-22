@@ -519,9 +519,11 @@ public class ColorImage implements Image, Cloneable {
 		Image copy = clone();
 
 		this.applyMask(maskArray[0]);
-		copy.applyMask(maskArray[1]);
-
-		this.synthesize(copy);
+		if(maskArray.length == 2){
+			copy.applyMask(maskArray[1]);
+	
+			this.synthesize(copy);
+		}
 	}
 	
 	public void synthesize(Image... imgs) {

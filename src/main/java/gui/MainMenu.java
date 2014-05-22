@@ -4,6 +4,7 @@ import javax.swing.JMenuBar;
 
 import menu.AnalysisMenu;
 import menu.FileMenu;
+import menu.MaskMenu;
 import menu.OperationsMenu;
 import menu.item.file.MouseCoordinatesLabel;
 import menu.item.file.SelectPanelMenuItem;
@@ -16,6 +17,7 @@ public class MainMenu extends JMenuBar {
 
 		this.add(new FileMenu(window));
 		this.add(new OperationsMenu(window));
+		this.add(new MaskMenu(window));
 		this.add(new AnalysisMenu(window));
 		this.add(new SelectPanelMenuItem(window, panel1));
 		this.add(new SelectPanelMenuItem(window, panel2));
