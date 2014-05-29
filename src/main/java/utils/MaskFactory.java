@@ -53,6 +53,16 @@ public class MaskFactory {
 		return mask;
 	}
 	
+	public static Mask laplacianMask(){
+		Mask mask = new Mask(3);
+		mask.setPixel(-1, 0, -1); 	// |  0 -1  0 |
+		mask.setPixel(1, 0, -1); 	// | -1  4 -1 |
+		mask.setPixel(0, -1, -1); 	// |  0 -1  0 |
+		mask.setPixel(0, 1, -1); 	//
+		mask.setPixel(0, 0, 4); 	//
+		return mask;		
+	}
+	
 	public static Mask susanMask(){
 		Mask mask = new Mask(7);
 		for(int j = -1; j <= 1; j++){

@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.xuggle.xuggler.Global;
-
 import utils.Mask;
 import utils.RandomNumberGenerator;
 
@@ -566,7 +564,7 @@ public class ColorImage implements Image, Cloneable {
 		double epsilon = 0.00001;
 		Image other;
 		int iterations = 0;
-		while (Math.abs(deltaT - previousDeltaT) > epsilon) {
+		while (Math.abs(Math.abs(deltaT) - Math.abs(previousDeltaT)) > epsilon) {
 			other = this.clone();
 			other.applyThreshold(actualThreshold);
 			Set<Point> whites = other.getWhites(), blacks = other.getBlacks();

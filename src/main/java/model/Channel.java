@@ -273,8 +273,8 @@ public class Channel implements Cloneable {
 
 		// Ultima recta - de r2 hacia arriba
 		double m2 = (MAX_CHANNEL_COLOR - y2) / (MAX_CHANNEL_COLOR - r2);
-		// when r = r2, y = y2 ; y2 = m * r2 + b
-		double b2 = y2 - m * r2;
+		// when r = r2, y = y2 ; y2 = m2 * r2 + b
+		double b2 = y2 - m2 * r2;
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {

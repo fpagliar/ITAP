@@ -5,6 +5,7 @@ import gui.Window;
 import javax.swing.JMenu;
 
 import menu.item.mask.BorderDetectionMenu;
+import menu.item.mask.LaplacianMenuItem;
 import menu.item.mask.WithDirectionMenu;
 
 public class MaskMenu extends JMenu {
@@ -17,5 +18,6 @@ public class MaskMenu extends JMenu {
 
 		this.add(new BorderDetectionMenu(window));
 		this.add(new WithDirectionMenu(window));
+		this.add(new LaplacianMenuItem(window));
 	}
 }
