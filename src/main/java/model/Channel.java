@@ -325,4 +325,32 @@ public class Channel implements Cloneable {
 		return;
 	}
 
+	public void markZeroCrossers() {
+		double previous = 0;
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				double pixel = this.getPixel(x, y);
+				if(previous < 0 && pixel > 0)
+					this.setPixel(x, y, MAX_CHANNEL_COLOR);
+				else
+					this.setPixel(x, y, 0);
+				previous = pixel;
+			}
+		return;
+	}
+	
+	public void markCrossersWithThreshold(int threshold) {
+		double previous = 0;
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				double pixel = this.getPixel(x, y);
+				double difference = pixel - previous;
+				if(difference > threshold)
+					this.setPixel(x, y, MAX_CHANNEL_COLOR);
+				else
+					this.setPixel(x, y, 0);
+				previous = pixel;
+			}
+		return;		
+	}
 }

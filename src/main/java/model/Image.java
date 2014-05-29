@@ -118,7 +118,8 @@ public interface Image {
 	public Set<Point> getBlacks();
 	public double getGlobalThreshold();
 	public int[][] getDerivationDirections();
-	//Works on B&W photos;
 	public void borderWithNoMaximumsDeletion(int[][] derivationDirections);
+	public void markZeroCrossers();
+	public void markCrossersWithThreshold(int threshold);
 
 }

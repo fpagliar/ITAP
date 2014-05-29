@@ -113,4 +113,64 @@ public class MaskFactory {
 		
 		return mask;
 	}
+	
+	public static Mask logMask() {
+		Mask mask = new Mask(7);
+		mask.setPixel(-3, -3, 0.0008);
+		mask.setPixel(-3, -2, 0.0066);
+		mask.setPixel(-3, -1, 0.0215);
+		mask.setPixel(-3, 0, 0.031);
+		mask.setPixel(-3, 1, 0.0215);
+		mask.setPixel(-3, 2, 0.0066);
+		mask.setPixel(-3, 3, 0.0008);
+		
+		mask.setPixel(-2, -3, 0.0066);
+		mask.setPixel(-2, -2, 0.0438);
+		mask.setPixel(-2, -1, 0.0982);
+		mask.setPixel(-2, 0, 0.108);
+		mask.setPixel(-2, 1, 0.0982);
+		mask.setPixel(-2, 2, 0.0438);
+		mask.setPixel(-2, 3, 0.0066);
+
+		mask.setPixel(-1, -3, 0.0215);
+		mask.setPixel(-1, -2, 0.0982);
+		mask.setPixel(-1, -1, 0);
+		mask.setPixel(-1, 0, -0.242);
+		mask.setPixel(-1, 1, 0);
+		mask.setPixel(-1, 2, 0.0982);
+		mask.setPixel(-1, 3, 0.0215);
+
+		mask.setPixel(0, -3, 0.031);
+		mask.setPixel(0, -2, 0.108);
+		mask.setPixel(0, -1, -0.242);
+		mask.setPixel(0, 0, -0.7979);
+		mask.setPixel(0, 1, -0.242);
+		mask.setPixel(0, 2, 0.108);
+		mask.setPixel(0, 3, 0.031);
+
+		mask.setPixel(1, -3, 0.0215);
+		mask.setPixel(1, -2, 0.0982);
+		mask.setPixel(1, -1, 0);
+		mask.setPixel(1, 0, -0.242);
+		mask.setPixel(1, 1, 0);
+		mask.setPixel(1, 2, 0.0982);
+		mask.setPixel(1, 3, 0.0215);
+		
+		mask.setPixel(2, -3, 0.0066);
+		mask.setPixel(2, -2, 0.0438);
+		mask.setPixel(2, -1, 0.0982);
+		mask.setPixel(2, 0, 0.108);
+		mask.setPixel(2, 1, 0.0982);
+		mask.setPixel(2, 2, 0.0438);
+		mask.setPixel(2, 3, 0.0066);
+
+		mask.setPixel(3, -3, 0.0008);
+		mask.setPixel(3, -2, 0.0066);
+		mask.setPixel(3, -1, 0.0215);
+		mask.setPixel(3, 0, 0.031);
+		mask.setPixel(3, 1, 0.0215);
+		mask.setPixel(3, 2, 0.0066);
+		mask.setPixel(3, 3, 0.0008);
+		return mask;
+	}
 }

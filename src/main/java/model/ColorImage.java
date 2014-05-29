@@ -550,6 +550,18 @@ public class ColorImage implements Image, Cloneable {
 		this.blue.synthesize(blueChnls);
 	}
 
+	public void markZeroCrossers() {
+		this.red.markZeroCrossers();
+		this.green = this.red;
+		this.blue = this.red;
+	}
+
+	public void markCrossersWithThreshold(int threshold) {
+		this.red.markCrossersWithThreshold(threshold);
+		this.green = this.red;
+		this.blue = this.red;
+	}
+
 	public int[][] getDerivationDirections() {
 		int[][] turns = new int[getWidth()][getHeight()];
 		ColorImage gxImage = (ColorImage) this.clone();
@@ -577,7 +589,8 @@ public class ColorImage implements Image, Cloneable {
 	}
 
 	public void borderWithNoMaximumsDeletion(int[][] derivationDirections) {
-		this.applyMasksAndSynth(MaskFactory.sobelMask(), MaskFactory.sobelMask().turn().turn());
+		this.applyMasksAndSynth(MaskFactory.sobelMask(), MaskFactory
+				.sobelMask().turn().turn());
 		this.red.deleteNotMaximums(derivationDirections);
 		this.blue = this.red;
 		this.green = this.red;
