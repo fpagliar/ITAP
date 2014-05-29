@@ -23,7 +23,8 @@ public class SobelBorderMenuItem extends JMenuItem {
 
 			public void actionPerformed(ActionEvent e) {
 				Image result = window.getFocusedPanel().getImage().clone();
-				result.applyMasksAndSynth(MaskFactory.sobelBorderMask());
+//				result.applyMasksAndSynth(MaskFactory.sobelBorderMask());
+				result.applyMasksAndSynth(MaskFactory.sobelMask(), MaskFactory.sobelMask().turn().turn());
 
 				window.getUnfocusedPanel().setImage(result);
 				window.repaint();

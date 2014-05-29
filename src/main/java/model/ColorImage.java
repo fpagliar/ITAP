@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import utils.Mask;
+import utils.MaskFactory;
 import utils.RandomNumberGenerator;
 
 public class ColorImage implements Image, Cloneable {
@@ -523,15 +524,12 @@ public class ColorImage implements Image, Cloneable {
 		this.blue.applyMask(mask);
 	}
 
-	public void applyMasksAndSynth(Mask[] maskArray) {
+	public void applyMasksAndSynth(Mask mask1, Mask mask2) {
 		Image copy = clone();
 
-		this.applyMask(maskArray[0]);
-		if (maskArray.length == 2) {
-			copy.applyMask(maskArray[1]);
-
-			this.synthesize(copy);
-		}
+		this.applyMask(mask1);
+		copy.applyMask(mask2);
+		this.synthesize(copy);
 	}
 
 	public void synthesize(Image... imgs) {
@@ -550,6 +548,39 @@ public class ColorImage implements Image, Cloneable {
 		this.red.synthesize(redChnls);
 		this.green.synthesize(greenChnls);
 		this.blue.synthesize(blueChnls);
+	}
+
+	public int[][] getDerivationDirections() {
+		int[][] turns = new int[getWidth()][getHeight()];
+		ColorImage gxImage = (ColorImage) this.clone();
+		gxImage.applyMask(MaskFactory.sobelMask());
+		ColorImage gyImage = (ColorImage) this.clone();
+		gyImage.applyMask(MaskFactory.sobelMask().turn().turn());
+		for (int i = 0; i < getWidth(); i++)
+			for (int j = 0; j < getHeight(); j++) {
+				double gx = gxImage.red.getPixel(i, j);
+				double gy = gyImage.red.getPixel(i, j);
+				double alpha = 0;
+				if (gx != 0) {
+					alpha = Math.atan(gy / gx);
+				}
+				if (alpha > 22.5 && alpha < 67.5)
+					turns[i][j] = 1;
+				else if (alpha > 67.5 && alpha < 112.5)
+					turns[i][j] = 2;
+				else if (alpha > 112.5 && alpha < 157.5)
+					turns[i][j] = 3;
+				else
+					turns[i][j] = 0;
+			}
+		return turns;
+	}
+
+	public void borderWithNoMaximumsDeletion(int[][] derivationDirections) {
+		this.applyMasksAndSynth(MaskFactory.sobelMask(), MaskFactory.sobelMask().turn().turn());
+		this.red.deleteNotMaximums(derivationDirections);
+		this.blue = this.red;
+		this.green = this.red;
 	}
 
 	public void contrast(double r1, double r2, double y1, double y2) {

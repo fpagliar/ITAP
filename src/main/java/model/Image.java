@@ -111,11 +111,14 @@ public interface Image {
 	public Color applyGaussianFilter(int pixelX, int pixelY, int rectangleSide, double sigma);
 	public void applyAnisotropicDiffusion(BorderDetector bd);
 	public void applyMask(Mask mask);
-	public void applyMasksAndSynth(Mask[] maskArray);
+	public void applyMasksAndSynth(Mask mask1, Mask mask2);
 	public void synthesize(Image... imgs);
 	public void contrast(double r1, double r2, double y1, double y2);
 	public Set<Point> getWhites();
 	public Set<Point> getBlacks();
 	public double getGlobalThreshold();
+	public int[][] getDerivationDirections();
+	//Works on B&W photos;
+	public void borderWithNoMaximumsDeletion(int[][] derivationDirections);
 
 }

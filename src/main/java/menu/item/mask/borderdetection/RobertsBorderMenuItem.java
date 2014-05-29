@@ -23,7 +23,8 @@ public class RobertsBorderMenuItem extends JMenuItem {
 
 			public void actionPerformed(ActionEvent e) {
 				Image result = window.getFocusedPanel().getImage().clone();
-				result.applyMasksAndSynth(MaskFactory.robertsBorderMask());
+				result.applyMasksAndSynth(MaskFactory.robertsMask(), MaskFactory.robertsMask().turn().turn());
+//				result.applyMasksAndSynth(MaskFactory.robertsBorderMask());
 
 				window.getUnfocusedPanel().setImage(result);
 				window.repaint();

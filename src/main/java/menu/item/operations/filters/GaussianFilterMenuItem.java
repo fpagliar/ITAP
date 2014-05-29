@@ -8,11 +8,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-public class GaussianFIlterMenuItem extends JMenuItem {
+public class GaussianFilterMenuItem extends JMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-	public GaussianFIlterMenuItem(final Window window) {
+	public GaussianFilterMenuItem(final Window window) {
 		super("Gaussian");
 
 		setEnabled(true);

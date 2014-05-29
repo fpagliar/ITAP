@@ -33,9 +33,7 @@ public class DirectedSobelMaskMenuItem  extends JMenuItem {
 						for(int i = 0; i < input ; i++){
 							mask = mask.turn();
 						}
-						Mask[] array = new Mask[1];
-						array[0] = mask;
-						result.applyMasksAndSynth(array);
+						result.applyMask(mask);
 		
 						window.getUnfocusedPanel().setImage(result);
 						window.repaint();

@@ -293,4 +293,36 @@ public class Channel implements Cloneable {
 		}
 	}
 
+	public void deleteNotMaximums(int[][] directions) {
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				double pixel = this.getPixel(x, y);
+				double left = 0, right = 0;
+				int direction = directions[x][y];
+				try{
+					if(direction == 0)
+						left = this.getPixel(x-1, y);
+					else if(direction == 1)
+						left = this.getPixel(x-1, y-1);
+					else if(direction == 2)
+						left = this.getPixel(x+1, y);
+					else if(direction == 3)
+						left = this.getPixel(x-1, y+1);
+				}catch(Exception e){}
+				try{
+					if(direction == 0)
+						right = this.getPixel(x+1, y);
+					else if(direction == 1)
+						right = this.getPixel(x+1, y+1);
+					else if(direction == 2)
+						left = this.getPixel(x-1, y);
+					else if(direction == 3)
+						left = this.getPixel(x+1, y-1);
+				}catch(Exception e){}
+				if(left > pixel || right > pixel)
+					this.setPixel(x, y, 0);			
+			}
+		return;
+	}
+
 }

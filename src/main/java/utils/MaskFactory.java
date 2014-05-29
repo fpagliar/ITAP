@@ -78,4 +78,39 @@ public class MaskFactory {
 				mask.setPixel(i, j, 1);
 		return mask;
 	}
+	
+	public static Mask gaussianMask() {
+		Mask mask = new Mask(5);
+		mask.setPixel(-2, -2, 2.0/159);
+		mask.setPixel(-2, -1, 4.0/159);
+		mask.setPixel(-2, 0, 5.0/159);
+		mask.setPixel(-2, 1, 4.0/159);
+		mask.setPixel(-2, 2, 2.0/159);
+
+		mask.setPixel(-1, -2, 4.0/159);
+		mask.setPixel(-1, -1, 9.0/159);
+		mask.setPixel(-1, 0, 12.0/159);
+		mask.setPixel(-1, 1, 9.0/159);
+		mask.setPixel(-1, 2, 4.0/159);
+
+		mask.setPixel(0, -2, 5.0/159);
+		mask.setPixel(0, -1, 12.0/159);
+		mask.setPixel(0, 0, 15.0/159);
+		mask.setPixel(0, 1, 12.0/159);
+		mask.setPixel(0, 2, 5.0/159);
+
+		mask.setPixel(1, -2, 4.0/159);
+		mask.setPixel(1, -1, 9.0/159);
+		mask.setPixel(1, 0, 12.0/159);
+		mask.setPixel(1, 1, 9.0/159);
+		mask.setPixel(1, 2, 4.0/159);
+
+		mask.setPixel(2, -2, 2.0/159);
+		mask.setPixel(2, -1, 4.0/159);
+		mask.setPixel(2, 0, 5.0/159);
+		mask.setPixel(2, 1, 4.0/159);
+		mask.setPixel(2, 2, 2.0/159);
+		
+		return mask;
+	}
 }

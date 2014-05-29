@@ -10,12 +10,12 @@ import javax.swing.JMenuItem;
 import model.Image;
 import utils.MaskFactory;
 
-public class LaplacianMenuItem extends JMenuItem {
+public class GaussianMaskMenuItem extends JMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-	public LaplacianMenuItem(final Window window) {
-		super("Laplacian");
+	public GaussianMaskMenuItem(final Window window) {
+		super("Gaussian");
 
 		setEnabled(true);
 
@@ -23,7 +23,7 @@ public class LaplacianMenuItem extends JMenuItem {
 
 			public void actionPerformed(ActionEvent e) {
 				Image result = window.getFocusedPanel().getImage().clone();
-				result.applyMask(MaskFactory.laplacianMask());
+				result.applyMask(MaskFactory.gaussianMask());
 				window.getUnfocusedPanel().setImage(result);
 				window.repaint();
 			}

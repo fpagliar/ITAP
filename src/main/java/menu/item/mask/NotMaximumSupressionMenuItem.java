@@ -8,14 +8,14 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 
 import model.Image;
-import utils.MaskFactory;
 
-public class LaplacianMenuItem extends JMenuItem {
+
+public class NotMaximumSupressionMenuItem extends JMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-	public LaplacianMenuItem(final Window window) {
-		super("Laplacian");
+	public NotMaximumSupressionMenuItem(final Window window) {
+		super("Not Maximum");
 
 		setEnabled(true);
 
@@ -23,7 +23,8 @@ public class LaplacianMenuItem extends JMenuItem {
 
 			public void actionPerformed(ActionEvent e) {
 				Image result = window.getFocusedPanel().getImage().clone();
-				result.applyMask(MaskFactory.laplacianMask());
+				int[][] derivationDirections = result.getDerivationDirections();
+				result.borderWithNoMaximumsDeletion(derivationDirections);
 				window.getUnfocusedPanel().setImage(result);
 				window.repaint();
 			}

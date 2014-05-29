@@ -23,7 +23,8 @@ public class PrewittBorderMenuItem extends JMenuItem {
 
 			public void actionPerformed(ActionEvent e) {
 				Image result = window.getFocusedPanel().getImage().clone();
-				result.applyMasksAndSynth(MaskFactory.prewittBorderMask());
+				result.applyMasksAndSynth(MaskFactory.prewittMask(), MaskFactory.prewittMask().turn().turn());
+//				result.applyMasksAndSynth(MaskFactory.prewittBorderMask());
 
 				window.getUnfocusedPanel().setImage(result);
 				window.repaint();
