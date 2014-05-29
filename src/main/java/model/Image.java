@@ -121,5 +121,5 @@ public interface Image {
 	public void borderWithNoMaximumsDeletion(int[][] derivationDirections);
 	public void markZeroCrossers();
 	public void markCrossersWithThreshold(int threshold);
-
+	public void histeresisThreshold(double t1, double t2);
 }

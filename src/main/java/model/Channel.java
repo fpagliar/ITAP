@@ -299,28 +299,62 @@ public class Channel implements Cloneable {
 				double pixel = this.getPixel(x, y);
 				double left = 0, right = 0;
 				int direction = directions[x][y];
-				try{
-					if(direction == 0)
-						left = this.getPixel(x-1, y);
-					else if(direction == 1)
-						left = this.getPixel(x-1, y-1);
-					else if(direction == 2)
-						left = this.getPixel(x+1, y);
-					else if(direction == 3)
-						left = this.getPixel(x-1, y+1);
-				}catch(Exception e){}
-				try{
-					if(direction == 0)
-						right = this.getPixel(x+1, y);
-					else if(direction == 1)
-						right = this.getPixel(x+1, y+1);
-					else if(direction == 2)
-						left = this.getPixel(x-1, y);
-					else if(direction == 3)
-						left = this.getPixel(x+1, y-1);
-				}catch(Exception e){}
-				if(left > pixel || right > pixel)
-					this.setPixel(x, y, 0);			
+				try {
+					if (direction == 0)
+						left = this.getPixel(x - 1, y);
+					else if (direction == 1)
+						left = this.getPixel(x - 1, y - 1);
+					else if (direction == 2)
+						left = this.getPixel(x + 1, y);
+					else if (direction == 3)
+						left = this.getPixel(x - 1, y + 1);
+				} catch (Exception e) {
+				}
+				try {
+					if (direction == 0)
+						right = this.getPixel(x + 1, y);
+					else if (direction == 1)
+						right = this.getPixel(x + 1, y + 1);
+					else if (direction == 2)
+						left = this.getPixel(x - 1, y);
+					else if (direction == 3)
+						left = this.getPixel(x + 1, y - 1);
+				} catch (Exception e) {
+				}
+				if (left > pixel || right > pixel)
+					this.setPixel(x, y, 0);
+			}
+		return;
+	}
+
+	public void histeresisThreshold(double t1, double t2) {
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				double pixel = this.getPixel(x, y);
+				if (pixel < t1)
+					this.setPixel(x, y, 0);
+				if (pixel > t1 && pixel < t2) {
+					double left = 0, right = 0, up = 0, down = 0;
+					try {
+						left = this.getPixel(x - 1, y);
+					} catch (Exception e) {
+					}
+					try {
+						right = this.getPixel(x + 1, y);
+					} catch (Exception e) {
+					}
+					try {
+						up = this.getPixel(x, y + 1);
+					} catch (Exception e) {
+					}
+					try {
+						down = this.getPixel(x, y - 1);
+					} catch (Exception e) {
+					}
+					if (left < t2 && right < t2 && up < t2 && down < t2) {
+						this.setPixel(x, y, 0);
+					}
+				}
 			}
 		return;
 	}
@@ -330,7 +364,7 @@ public class Channel implements Cloneable {
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < height; y++) {
 				double pixel = this.getPixel(x, y);
-				if(previous < 0 && pixel > 0)
+				if (previous < 0 && pixel > 0)
 					this.setPixel(x, y, MAX_CHANNEL_COLOR);
 				else
 					this.setPixel(x, y, 0);
@@ -338,19 +372,19 @@ public class Channel implements Cloneable {
 			}
 		return;
 	}
-	
+
 	public void markCrossersWithThreshold(int threshold) {
 		double previous = 0;
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < height; y++) {
 				double pixel = this.getPixel(x, y);
 				double difference = pixel - previous;
-				if(difference > threshold)
+				if (difference > threshold)
 					this.setPixel(x, y, MAX_CHANNEL_COLOR);
 				else
 					this.setPixel(x, y, 0);
 				previous = pixel;
 			}
-		return;		
+		return;
 	}
 }

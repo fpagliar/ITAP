@@ -5,8 +5,10 @@ import gui.Window;
 import javax.swing.JMenu;
 
 import menu.item.mask.BorderDetectionMenu;
+import menu.item.mask.CannyMenuItem;
 import menu.item.mask.GaussianLaplacianMenuItem;
 import menu.item.mask.GaussianMaskMenuItem;
+import menu.item.mask.HisteresisThresholdMenuItem;
 import menu.item.mask.LapacianWithCrossersMenuItem;
 import menu.item.mask.LaplacianMenuItem;
 import menu.item.mask.NotMaximumSupressionMenuItem;
@@ -27,5 +29,7 @@ public class MaskMenu extends JMenu {
 		this.add(new GaussianLaplacianMenuItem(window));
 		this.add(new GaussianMaskMenuItem(window));
 		this.add(new NotMaximumSupressionMenuItem(window));
+		this.add(new HisteresisThresholdMenuItem(window));
+		this.add(new CannyMenuItem(window));
 	}
 }

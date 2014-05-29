@@ -592,8 +592,14 @@ public class ColorImage implements Image, Cloneable {
 		this.applyMasksAndSynth(MaskFactory.sobelMask(), MaskFactory
 				.sobelMask().turn().turn());
 		this.red.deleteNotMaximums(derivationDirections);
-		this.blue = this.red;
 		this.green = this.red;
+		this.blue = this.red;
+	}
+
+	public void histeresisThreshold(double t1, double t2) {
+		this.red.histeresisThreshold(t1, t2);
+		this.green.histeresisThreshold(t1, t2);
+		this.blue.histeresisThreshold(t1, t2);
 	}
 
 	public void contrast(double r1, double r2, double y1, double y2) {
