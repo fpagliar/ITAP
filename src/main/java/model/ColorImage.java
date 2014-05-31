@@ -524,15 +524,15 @@ public class ColorImage implements Image, Cloneable {
 		this.blue.applyMask(mask);
 	}
 
-	public void applyMasksAndSynth(Mask mask1, Mask mask2) {
+	public void applyMasksAndSynth(SynthesisFunction func, Mask mask1, Mask mask2) {
 		Image copy = clone();
 
 		this.applyMask(mask1);
 		copy.applyMask(mask2);
-		this.synthesize(copy);
+		this.synthesize(func, copy);
 	}
 
-	public void synthesize(Image... imgs) {
+	public void synthesize(SynthesisFunction func, Image... imgs) {
 		Image[] cimgs = imgs;
 
 		Channel[] redChnls = new Channel[cimgs.length];
@@ -545,11 +545,11 @@ public class ColorImage implements Image, Cloneable {
 			blueChnls[i] = ((ColorImage) cimgs[i]).blue;
 		}
 
-		this.red.synthesize(redChnls);
-		this.green.synthesize(greenChnls);
-		this.blue.synthesize(blueChnls);
+		this.red.synthesize(func, redChnls);
+		this.green.synthesize(func,greenChnls);
+		this.blue.synthesize(func,blueChnls);
 	}
-
+	
 	public void markZeroCrossers() {
 		this.red.markZeroCrossers();
 		this.green = this.red;
@@ -589,7 +589,7 @@ public class ColorImage implements Image, Cloneable {
 	}
 
 	public void borderWithNoMaximumsDeletion(int[][] derivationDirections) {
-		this.applyMasksAndSynth(MaskFactory.sobelMask(), MaskFactory
+		this.applyMasksAndSynth(new ModuleSynth() ,MaskFactory.sobelMask(), MaskFactory
 				.sobelMask().turn().turn());
 		this.red.deleteNotMaximums(derivationDirections);
 		this.green = this.red;
@@ -607,7 +607,17 @@ public class ColorImage implements Image, Cloneable {
 		green.contrast(r1, r2, y1, y2);
 		blue.contrast(r1, r2, y1, y2);
 	}
+	
+	public void applySusan(Mask mask, double threshold) {
+		this.red.applySusan(mask, threshold, 0, 0, Channel.MAX_CHANNEL_COLOR);
+		this.green.applySusan(mask, threshold, 0, 0, 0);
+		this.blue.applySusan(mask, threshold, 0, Channel.MAX_CHANNEL_COLOR, 0);
+	}
 
+	public void applyHough(int granularityTita, int granularityRo, double threshold) {
+		this.red.applyHough(granularityTita, granularityRo, threshold);
+	}
+	
 	public double getGlobalThreshold() {
 		double actualThreshold = 255 / 2, previousThreshold = 0;
 		double previousDeltaT = 500, deltaT = 0;

@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 
 import model.Image;
+import model.ModuleSynth;
 import utils.MaskFactory;
 
 public class PrewittBorderMenuItem extends JMenuItem {
@@ -23,7 +24,7 @@ public class PrewittBorderMenuItem extends JMenuItem {
 
 			public void actionPerformed(ActionEvent e) {
 				Image result = window.getFocusedPanel().getImage().clone();
-				result.applyMasksAndSynth(MaskFactory.prewittMask(), MaskFactory.prewittMask().turn().turn());
+				result.applyMasksAndSynth(new ModuleSynth(), MaskFactory.prewittMask(), MaskFactory.prewittMask().turn().turn());
 //				result.applyMasksAndSynth(MaskFactory.prewittBorderMask());
 
 				window.getUnfocusedPanel().setImage(result);

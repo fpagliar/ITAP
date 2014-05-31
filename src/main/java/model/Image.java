@@ -111,8 +111,8 @@ public interface Image {
 	public Color applyGaussianFilter(int pixelX, int pixelY, int rectangleSide, double sigma);
 	public void applyAnisotropicDiffusion(BorderDetector bd);
 	public void applyMask(Mask mask);
-	public void applyMasksAndSynth(Mask mask1, Mask mask2);
-	public void synthesize(Image... imgs);
+	public void applyMasksAndSynth(SynthesisFunction func, Mask mask1, Mask mask2);
+	public void synthesize(SynthesisFunction func, Image... imgs);
 	public void contrast(double r1, double r2, double y1, double y2);
 	public Set<Point> getWhites();
 	public Set<Point> getBlacks();
@@ -122,4 +122,6 @@ public interface Image {
 	public void markZeroCrossers();
 	public void markCrossersWithThreshold(int threshold);
 	public void histeresisThreshold(double t1, double t2);
+	public void applySusan(Mask mask, double threshold);
+	public void applyHough(int granularityTita, int granularityRo, double threshold);
 }

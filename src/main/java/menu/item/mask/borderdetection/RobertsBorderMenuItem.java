@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 
 import model.Image;
+import model.ModuleSynth;
 import utils.MaskFactory;
 
 public class RobertsBorderMenuItem extends JMenuItem {
@@ -23,7 +24,7 @@ public class RobertsBorderMenuItem extends JMenuItem {
 
 			public void actionPerformed(ActionEvent e) {
 				Image result = window.getFocusedPanel().getImage().clone();
-				result.applyMasksAndSynth(MaskFactory.robertsMask(), MaskFactory.robertsMask().turn().turn());
+				result.applyMasksAndSynth(new ModuleSynth(), MaskFactory.robertsMask(), MaskFactory.robertsMask().turn().turn());
 //				result.applyMasksAndSynth(MaskFactory.robertsBorderMask());
 
 				window.getUnfocusedPanel().setImage(result);

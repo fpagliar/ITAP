@@ -12,23 +12,24 @@ import javax.swing.JMenuItem;
 import model.Image;
 import utils.MaskFactory;
 
-public class GaussianMaskMenuItem extends JMenuItem {
+public class SusanMenuItem extends JMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-	public GaussianMaskMenuItem(final Window window) {
-		super("Gaussian");
+	public SusanMenuItem(final Window window) {
+		super("Susan");
 
 		setEnabled(true);
+		System.out.println(MaskFactory.susanMask());
 
 		this.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				new InputDoubleWindow(window, "sigma:", 0.5 , new InputDoubleAction() {
+				new InputDoubleWindow(window, "threshold", 10.0, new InputDoubleAction() {
 					
 					public void performAction(Window window, double input) {
 						Image result = window.getFocusedPanel().getImage().clone();
-						result.applyMask(MaskFactory.gaussianMask(input));
+						result.applySusan(MaskFactory.susanMask(), input);
 						window.getUnfocusedPanel().setImage(result);
 						window.repaint();
 					}

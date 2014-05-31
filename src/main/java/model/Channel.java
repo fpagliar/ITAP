@@ -1,5 +1,9 @@
 package model;
 
+import java.awt.Point;
+import java.util.HashSet;
+import java.util.Set;
+
 import utils.Mask;
 
 public class Channel implements Cloneable {
@@ -234,7 +238,46 @@ public class Channel implements Cloneable {
 		return newColor;
 	}
 
-	public void synthesize(Channel... chnls) {
+	public void applySusan(Mask mask, double threshold, double common,
+			double side, double corner) {
+		Channel newChannel = new Channel(this.width, this.height);
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				int count = applySusan(x, y, mask, threshold);
+				double sr0 = 1 - (((double) count) / 37);
+				double color;
+				if (sr0 > 0.625)
+					color = corner;
+				else if (sr0 > 0.25)
+					color = side;
+				else
+					color = common;
+				newChannel.setPixel(x, y, color);
+			}
+		}
+		this.channel = newChannel.channel;
+	}
+
+	private int applySusan(int pointX, int pointY, Mask mask, double threshold) {
+		int count = 0;
+		for (int x = -mask.getWidth() / 2; x <= mask.getWidth() / 2; x++) {
+			for (int y = -mask.getHeight() / 2; y <= mask.getHeight() / 2; y++) {
+				if (this.validPixel(pointX + x, pointY + y)) {
+					try {
+						double difference = (this.getPixel(pointX + x, pointY
+								+ y) * mask.getValue(x, y))
+								- this.getPixel(pointX, pointY);
+						if (Math.abs(difference) < threshold)
+							count++;
+					} catch (IndexOutOfBoundsException e) {
+					}
+				}
+			}
+		}
+		return count;
+	}
+
+	public void synthesize(SynthesisFunction func, Channel... chnls) {
 		double[] result = new double[width * height];
 
 		for (int x = 0; x < channel.length; x++) {
@@ -243,10 +286,7 @@ public class Channel implements Cloneable {
 			for (int y = 1; y <= chnls.length; y++) {
 				colors[y] = chnls[y - 1].channel[x];
 			}
-			// MODULE (works better than avg)
-			for (double d : colors)
-				result[x] += Math.pow(d, 2);
-			result[x] = Math.sqrt(result[x]);
+			result[x] = func.apply(colors);
 		}
 		this.channel = result;
 	}
@@ -386,5 +426,58 @@ public class Channel implements Cloneable {
 				previous = pixel;
 			}
 		return;
+	}
+	
+	public void applyHough(int granularityTita, int granularityRo, double threshold) {
+		int[][] bucket = new int[granularityTita][granularityRo];
+		double sqrt2D = Math.sqrt(2) * Math.max(width, height);
+		for(int i = 0; i < granularityTita; i++)
+			for(int j = 0; j < granularityRo; j++){
+				double tita = -Math.PI/2 + (Math.PI*i)/granularityTita;
+				double ro = -sqrt2D + (sqrt2D*2*j)/granularityRo;
+				bucket[i][j] = countWhites(tita, ro, threshold);
+			}
+
+		Set<Point> winners = new HashSet<Point>();
+		for(int w = 0; w < (granularityTita * granularityRo * 0.2); w++){
+			int maxValue = 0;
+			Point max = new Point(0,0);
+			for(int i = 0; i < granularityTita; i++)
+				for(int j = 0; j < granularityRo; j++){
+					if(bucket[i][j] > maxValue && !winners.contains(new Point(i, j))){
+						maxValue = bucket[i][j];
+						max = new Point(i,j);
+					}
+				}
+			winners.add(max);
+		}
+		
+		for(Point p: winners)
+			drawLine(-Math.PI/2 + (Math.PI*p.x)/granularityTita, -sqrt2D + (sqrt2D*2*p.y)/granularityRo, threshold);
+	}
+	
+	public void drawLine(double tita, double ro, double threshold){
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				if(getPixel(x, y) == MAX_CHANNEL_COLOR){
+					double straightLineError = ro - x*Math.cos(tita) - y*Math.sin(tita);
+					if(Math.abs(straightLineError) < threshold)
+						setPixel(x, y, MAX_CHANNEL_COLOR);
+				}
+			}
+		return;
+	}
+	
+	private int countWhites(double tita, double ro, double threshold){
+		int count = 0;
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				if(getPixel(x, y) == MAX_CHANNEL_COLOR){
+					double straightLineError = ro - x*Math.cos(tita) - y*Math.sin(tita);
+					if(Math.abs(straightLineError) < threshold)
+						count++;
+				}
+			}
+		return count;
 	}
 }

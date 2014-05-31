@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 
 import model.Image;
+import model.ModuleSynth;
 import utils.MaskFactory;
 
 public class SobelBorderMenuItem extends JMenuItem {
@@ -24,7 +25,7 @@ public class SobelBorderMenuItem extends JMenuItem {
 			public void actionPerformed(ActionEvent e) {
 				Image result = window.getFocusedPanel().getImage().clone();
 //				result.applyMasksAndSynth(MaskFactory.sobelBorderMask());
-				result.applyMasksAndSynth(MaskFactory.sobelMask(), MaskFactory.sobelMask().turn().turn());
+				result.applyMasksAndSynth(new ModuleSynth(), MaskFactory.sobelMask(), MaskFactory.sobelMask().turn().turn());
 
 				window.getUnfocusedPanel().setImage(result);
 				window.repaint();

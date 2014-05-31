@@ -9,9 +9,11 @@ import menu.item.mask.CannyMenuItem;
 import menu.item.mask.GaussianLaplacianMenuItem;
 import menu.item.mask.GaussianMaskMenuItem;
 import menu.item.mask.HisteresisThresholdMenuItem;
+import menu.item.mask.HoughMenuItem;
 import menu.item.mask.LapacianWithCrossersMenuItem;
 import menu.item.mask.LaplacianMenuItem;
 import menu.item.mask.NotMaximumSupressionMenuItem;
+import menu.item.mask.SusanMenuItem;
 import menu.item.mask.WithDirectionMenu;
 
 public class MaskMenu extends JMenu {
@@ -31,5 +33,7 @@ public class MaskMenu extends JMenu {
 		this.add(new NotMaximumSupressionMenuItem(window));
 		this.add(new HisteresisThresholdMenuItem(window));
 		this.add(new CannyMenuItem(window));
+		this.add(new SusanMenuItem(window));
+		this.add(new HoughMenuItem(window));
 	}
 }
