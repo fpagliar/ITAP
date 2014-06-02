@@ -7,9 +7,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import model.Channel.Point3D;
 import utils.Mask;
 import utils.MaskFactory;
 import utils.RandomNumberGenerator;
@@ -614,10 +616,27 @@ public class ColorImage implements Image, Cloneable {
 		this.blue.applySusan(mask, threshold, 0, Channel.MAX_CHANNEL_COLOR, 0);
 	}
 
-	public void applyHough(int granularityTita, int granularityRo, double threshold) {
-		this.red.applyHough(granularityTita, granularityRo, threshold);
+	public HashMap<Double, Double> applyHough(int granularityTita, int granularityRo, double threshold, int totalLines) {
+		return this.red.applyHough(granularityTita, granularityRo, threshold, totalLines);
+		
 	}
 	
+	public void drawHoughLines(HashMap<Double, Double> roTitas, double threshold) {
+		this.red.drawLines(roTitas, threshold);
+	}
+	
+
+	public Set<Point3D> applyCircleHough(int granularityA, int granularityB, int granularityR,
+			double threshold, int totalLines) {
+		return this.red.applyCircleHough(granularityA, granularityB, granularityR,
+				threshold, totalLines);
+		
+	}
+	
+	public void drawHoughCircles(Set<Point3D> abr, double threshold) {
+		this.red.drawCircles(abr, threshold);
+	}
+
 	public double getGlobalThreshold() {
 		double actualThreshold = 255 / 2, previousThreshold = 0;
 		double previousDeltaT = 500, deltaT = 0;

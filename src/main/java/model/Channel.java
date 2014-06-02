@@ -1,6 +1,7 @@
 package model;
 
 import java.awt.Point;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -427,57 +428,156 @@ public class Channel implements Cloneable {
 			}
 		return;
 	}
-	
-	public void applyHough(int granularityTita, int granularityRo, double threshold) {
+
+	public HashMap<Double, Double> applyHough(int granularityTita, int granularityRo,
+			double threshold, int totalLines) {
 		int[][] bucket = new int[granularityTita][granularityRo];
 		double sqrt2D = Math.sqrt(2) * Math.max(width, height);
-		for(int i = 0; i < granularityTita; i++)
-			for(int j = 0; j < granularityRo; j++){
-				double tita = -Math.PI/2 + (Math.PI*i)/granularityTita;
-				double ro = -sqrt2D + (sqrt2D*2*j)/granularityRo;
+		for (int i = 0; i < granularityTita; i++)
+			for (int j = 0; j < granularityRo; j++) {
+				double tita = -Math.PI / 2 + (Math.PI * i) / granularityTita;
+				double ro = -sqrt2D + (sqrt2D * 2 * j) / granularityRo;
 				bucket[i][j] = countWhites(tita, ro, threshold);
 			}
 
 		Set<Point> winners = new HashSet<Point>();
-		for(int w = 0; w < (granularityTita * granularityRo * 0.2); w++){
+		for (int w = 0; w < totalLines; w++) {
 			int maxValue = 0;
-			Point max = new Point(0,0);
-			for(int i = 0; i < granularityTita; i++)
-				for(int j = 0; j < granularityRo; j++){
-					if(bucket[i][j] > maxValue && !winners.contains(new Point(i, j))){
+			Point max = new Point(0, 0);
+			for (int i = 0; i < granularityTita; i++)
+				for (int j = 0; j < granularityRo; j++) {
+					if (bucket[i][j] > maxValue
+							&& !winners.contains(new Point(i, j))) {
 						maxValue = bucket[i][j];
-						max = new Point(i,j);
+						max = new Point(i, j);
 					}
 				}
 			winners.add(max);
 		}
-		
-		for(Point p: winners)
-			drawLine(-Math.PI/2 + (Math.PI*p.x)/granularityTita, -sqrt2D + (sqrt2D*2*p.y)/granularityRo, threshold);
+
+		HashMap<Double, Double> roTita = new HashMap<Double, Double>();
+		for (Point p : winners)
+			roTita.put(-sqrt2D + (sqrt2D * 2 * p.y) / granularityRo, -Math.PI
+					/ 2 + (Math.PI * p.x) / granularityTita);
+		return roTita;
 	}
-	
-	public void drawLine(double tita, double ro, double threshold){
-		for (int x = 0; x < width; x++)
-			for (int y = 0; y < height; y++) {
-				if(getPixel(x, y) == MAX_CHANNEL_COLOR){
-					double straightLineError = ro - x*Math.cos(tita) - y*Math.sin(tita);
-					if(Math.abs(straightLineError) < threshold)
-						setPixel(x, y, MAX_CHANNEL_COLOR);
-				}
-			}
+
+	public void drawLines(HashMap<Double, Double> roTitas, double threshold) {
+		for (Double ro : roTitas.keySet())
+			drawLine(roTitas.get(ro), ro, threshold);
 		return;
 	}
-	
-	private int countWhites(double tita, double ro, double threshold){
+
+	public void drawLine(double tita, double ro, double threshold) {
+		// System.out.println("ro:" + ro + " tita:" + tita);
+		for (int x = 0; x < width; x++) {
+			int y = (int) ((ro - x * Math.cos(tita)) / Math.sin(tita));
+			// System.out.println(y);
+			if (y > 0 && y < height)
+				setPixel(x, y, MAX_CHANNEL_COLOR);
+		}
+		// for (int x = 0; x < width; x++)
+		// for (int y = 0; y < height; y++) {
+		// if(getPixel(x, y) == MAX_CHANNEL_COLOR){
+		// double straightLineError = ro - x*Math.cos(tita) - y*Math.sin(tita);
+		// if(Math.abs(straightLineError) < threshold)
+		// setPixel(x, y, MAX_CHANNEL_COLOR);
+		// }
+		// }
+		// return;
+	}
+
+	private int countWhites(double tita, double ro, double threshold) {
 		int count = 0;
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < height; y++) {
-				if(getPixel(x, y) == MAX_CHANNEL_COLOR){
-					double straightLineError = ro - x*Math.cos(tita) - y*Math.sin(tita);
-					if(Math.abs(straightLineError) < threshold)
+				// System.out.println(getPixel(x, y));
+				if (truncatePixel(getPixel(x, y)) == MAX_CHANNEL_COLOR) {
+					double straightLineError = ro - x * Math.cos(tita) - y
+							* Math.sin(tita);
+					// System.out.println(straightLineError);
+					if (Math.abs(straightLineError) < threshold)
 						count++;
 				}
 			}
 		return count;
 	}
+	
+	public Set<Point3D> applyCircleHough(int granularityA, int granularityB, int granularityR,
+			double threshold, int totalLines) {
+		int[][][] bucket = new int[granularityA][granularityB][granularityR];
+		for (int i = 0; i < granularityA; i++)
+			for (int j = 0; j < granularityB; j++) 
+				for (int k = 0; k < granularityR; k++) {
+					double a = width/granularityA * i;
+					double b = width/granularityB * j;
+					double r = 30 + 10/granularityR * k;
+					bucket[i][j][k] = countCircleWhites(a, b, r, threshold);
+				}
+			
+
+		Set<Point3D> winners = new HashSet<Point3D>();
+		for (int w = 0; w < totalLines; w++) {
+			int maxValue = 0;
+			Point3D max = new Point3D(0, 0, 0);
+			for (int i = 0; i < granularityA; i++)
+				for (int j = 0; j < granularityB; j++)
+					for (int k = 0; k < granularityR; k++) {
+						if (bucket[i][j][k] > maxValue
+								&& !winners.contains(new Point3D(i, j, k))) {
+							maxValue = bucket[i][j][k];
+							max = new Point3D(i, j, k);
+						}
+					}
+			winners.add(max);
+		}
+
+		Set<Point3D> abr = new HashSet<Point3D>();
+		for (Point3D p : winners)
+			abr.add(new Point3D(width/granularityA * p.x, width/granularityB * p.y, 30 + 10/p.z));
+		return abr;
+	}
+
+	private int countCircleWhites(double a, double b, double r, double threshold) {
+		int count = 0;
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				// System.out.println(getPixel(x, y));
+				if (truncatePixel(getPixel(x, y)) == MAX_CHANNEL_COLOR) {
+					double circleError = Math.pow((x - a), 2) + Math.pow((y - b), 2) - Math.pow(r, 2); 
+					// System.out.println(straightLineError);
+					if (Math.abs(circleError) < threshold)
+						count++;
+				}
+			}
+		return count;
+	}
+	
+	public void drawCircles(Set<Point3D> abr, double threshold) {
+		for (Point3D p : abr)
+			drawCircle(p.x, p.y, p.z, threshold);
+		return;
+	}
+
+	private void drawCircle(double a, double b, double r, double threshold) {
+		for(int x = (int)(a - r); x < a + r; x++)
+			for(int y = (int)(b - r); y < b + r; y++){
+				if(Math.abs(Math.pow((x-a), 2) + Math.pow((y-b), 2) - Math.pow(r, 2)) < threshold)
+					if(validPixel(x, y))
+						setPixel(x, y, MAX_CHANNEL_COLOR);
+			}
+	}
+	
+	public class Point3D {
+		public final double x;
+		public final double y;
+		public final double z;
+		
+		public Point3D(double x, double y, double z) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+	}
+	
 }

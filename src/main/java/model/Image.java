@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.Set;
 
+import model.Channel.Point3D;
 import utils.Mask;
 
 public interface Image {
@@ -123,5 +125,10 @@ public interface Image {
 	public void markCrossersWithThreshold(int threshold);
 	public void histeresisThreshold(double t1, double t2);
 	public void applySusan(Mask mask, double threshold);
-	public void applyHough(int granularityTita, int granularityRo, double threshold);
+	public HashMap<Double, Double> applyHough(int granularityTita, int granularityRo, double threshold, int totalLines);
+	public void drawHoughLines(HashMap<Double, Double> roTitas, double threshold);
+	public Set<Point3D> applyCircleHough(int granularityA, int granularityB, int granularityR,
+			double threshold, int totalLines);
+	public void drawHoughCircles(Set<Point3D> abr, double threshold);
+
 }
