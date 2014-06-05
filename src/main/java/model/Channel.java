@@ -429,8 +429,8 @@ public class Channel implements Cloneable {
 		return;
 	}
 
-	public HashMap<Double, Double> applyHough(int granularityTita, int granularityRo,
-			double threshold, int totalLines) {
+	public HashMap<Double, Double> applyHough(int granularityTita,
+			int granularityRo, double threshold, int totalLines) {
 		int[][] bucket = new int[granularityTita][granularityRo];
 		double sqrt2D = Math.sqrt(2) * Math.max(width, height);
 		for (int i = 0; i < granularityTita; i++)
@@ -502,19 +502,18 @@ public class Channel implements Cloneable {
 			}
 		return count;
 	}
-	
-	public Set<Point3D> applyCircleHough(int granularityA, int granularityB, int granularityR,
-			double threshold, int totalLines) {
+
+	public Set<Point3D> applyCircleHough(int granularityA, int granularityB,
+			int granularityR, double threshold, int totalLines) {
 		int[][][] bucket = new int[granularityA][granularityB][granularityR];
 		for (int i = 0; i < granularityA; i++)
-			for (int j = 0; j < granularityB; j++) 
+			for (int j = 0; j < granularityB; j++)
 				for (int k = 0; k < granularityR; k++) {
-					double a = width/granularityA * i;
-					double b = width/granularityB * j;
-					double r = 30 + 10/granularityR * k;
+					double a = width / granularityA * i;
+					double b = width / granularityB * j;
+					double r = 20 + 30 / granularityR * k;
 					bucket[i][j][k] = countCircleWhites(a, b, r, threshold);
 				}
-			
 
 		Set<Point3D> winners = new HashSet<Point3D>();
 		for (int w = 0; w < totalLines; w++) {
@@ -530,11 +529,16 @@ public class Channel implements Cloneable {
 						}
 					}
 			winners.add(max);
+			System.out.println("Winner! votes: " + maxValue + " a:"
+					+ (width / granularityA * max.x) + " b:"
+					+ (width / granularityB * max.y) + " r:"
+					+ (30 + 10 / granularityR * max.z));
 		}
 
 		Set<Point3D> abr = new HashSet<Point3D>();
 		for (Point3D p : winners)
-			abr.add(new Point3D(width/granularityA * p.x, width/granularityB * p.y, 30 + 10/p.z));
+			abr.add(new Point3D(width / granularityA * p.x, width
+					/ granularityB * p.y, 30 + 10 / granularityR * p.z));
 		return abr;
 	}
 
@@ -544,7 +548,8 @@ public class Channel implements Cloneable {
 			for (int y = 0; y < height; y++) {
 				// System.out.println(getPixel(x, y));
 				if (truncatePixel(getPixel(x, y)) == MAX_CHANNEL_COLOR) {
-					double circleError = Math.pow((x - a), 2) + Math.pow((y - b), 2) - Math.pow(r, 2); 
+					double circleError = Math.pow((x - a), 2)
+							+ Math.pow((y - b), 2) - Math.pow(r, 2);
 					// System.out.println(straightLineError);
 					if (Math.abs(circleError) < threshold)
 						count++;
@@ -552,7 +557,7 @@ public class Channel implements Cloneable {
 			}
 		return count;
 	}
-	
+
 	public void drawCircles(Set<Point3D> abr, double threshold) {
 		for (Point3D p : abr)
 			drawCircle(p.x, p.y, p.z, threshold);
@@ -560,24 +565,111 @@ public class Channel implements Cloneable {
 	}
 
 	private void drawCircle(double a, double b, double r, double threshold) {
-		for(int x = (int)(a - r); x < a + r; x++)
-			for(int y = (int)(b - r); y < b + r; y++){
-				if(Math.abs(Math.pow((x-a), 2) + Math.pow((y-b), 2) - Math.pow(r, 2)) < threshold)
-					if(validPixel(x, y))
+		for (int x = (int) (a - r); x < a + r; x++)
+			for (int y = (int) (b - r); y < b + r; y++) {
+				if (Math.abs(Math.pow((x - a), 2) + Math.pow((y - b), 2)
+						- Math.pow(r, 2)) < threshold)
+					if (validPixel(x, y))
 						setPixel(x, y, MAX_CHANNEL_COLOR);
 			}
 	}
-	
+
+	/**
+	 * @author http://en.wikipedia.org/wiki/Otsu%27s_method
+	 */
+	public double otsuThreshold() {
+
+		int[] histogram = getHistogram();
+		int total = channel.length;
+
+		double sum = 0;
+		for (int i = 0; i < MAX_CHANNEL_COLOR; i++) {
+			sum += i * histogram[i];
+		}
+
+		double sumB = 0;
+		int wB = 0;
+		int wF = 0;
+
+		double max = 0;
+		int threshold1 = 0;
+		int threshold2 = 0;
+
+		for (int i = 0; i < MAX_CHANNEL_COLOR; i++) {
+			wB += histogram[i];
+			if (wB == 0) {
+				continue;
+			}
+			wF = total - wB;
+
+			if (wF == 0) {
+				break;
+			}
+
+			sumB += i * histogram[i];
+			double mB = sumB / wB;
+			double mF = (sum - sumB) / wF;
+
+			double between = wB * wF * Math.pow(mB - mF, 2);
+
+			if (between >= max) {
+				threshold1 = i;
+				if (between > max)
+					threshold2 = i;
+				max = between;
+			}
+		}
+		return ((threshold1 + threshold2) / 2.0);
+	}
+
+	public void applyThreshold(double value) {
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				double pixelColor = getPixel(x, y);
+				int newColor = (pixelColor < value) ? MAX_CHANNEL_COLOR
+						: MIN_CHANNEL_COLOR;
+				setPixel(x, y, newColor);
+			}
+		return;
+	}
+
+	public int[] getHistogram() {
+
+		int[] histogram = new int[MAX_CHANNEL_COLOR+1];
+		for (int i = 0; i < histogram.length; i++) {
+			histogram[i] = 0;
+		}
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				int val = (int) getPixel(x, y);
+				histogram[val]++;
+			}
+		return histogram;
+	}
+
 	public class Point3D {
 		public final double x;
 		public final double y;
 		public final double z;
-		
+
 		public Point3D(double x, double y, double z) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
 		}
+
+		@Override
+		public int hashCode() {
+			return (int) (x * 100 + y * 10000 + z);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			Point3D other = (Point3D) obj;
+			double epsilon = 0.01;
+			return Math.abs(x - other.x) < epsilon
+					&& Math.abs(y - other.y) < epsilon
+					&& Math.abs(z - other.z) < epsilon;
+		}
 	}
-	
 }

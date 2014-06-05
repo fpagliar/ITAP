@@ -130,5 +130,5 @@ public interface Image {
 	public Set<Point3D> applyCircleHough(int granularityA, int granularityB, int granularityR,
 			double threshold, int totalLines);
 	public void drawHoughCircles(Set<Point3D> abr, double threshold);
-
+	public double otsuThreshold();
 }

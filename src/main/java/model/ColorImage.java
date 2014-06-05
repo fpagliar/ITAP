@@ -290,18 +290,9 @@ public class ColorImage implements Image, Cloneable {
 	}
 
 	public void applyThreshold(double value) {
-		for (int x = 0; x < getWidth(); x++) {
-			for (int y = 0; y < getHeight(); y++) {
-				double pixelColor = (int) red.getPixel(x, y);
-				Color newColor = (pixelColor < value) ? Color.WHITE
-						: Color.BLACK;
-				// Red green and blue are the same if it is grayscale
-				// TODO: should this be available for color images?
-				red.setPixel(x, y, newColor.getRed());
-				green.setPixel(x, y, newColor.getGreen());
-				blue.setPixel(x, y, newColor.getBlue());
-			}
-		}
+		this.red.applyThreshold(value);
+		this.green = this.red.clone();
+		this.blue = this.red.clone();
 	}
 
 	public void exponentialNoise(double u) {
@@ -602,6 +593,10 @@ public class ColorImage implements Image, Cloneable {
 		this.red.histeresisThreshold(t1, t2);
 		this.green.histeresisThreshold(t1, t2);
 		this.blue.histeresisThreshold(t1, t2);
+	}
+	
+	public double otsuThreshold() {
+		return red.otsuThreshold();
 	}
 
 	public void contrast(double r1, double r2, double y1, double y2) {
