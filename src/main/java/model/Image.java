@@ -131,4 +131,6 @@ public interface Image {
 			double threshold, int totalLines);
 	public void drawHoughCircles(Set<Point3D> abr, double threshold);
 	public double otsuThreshold();
+
+	void tracking(Tracker tita);
 }

@@ -9,6 +9,8 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -95,7 +97,15 @@ public class ImageSelectionCapturer {
 		return lastSelection;
 	}
 	
-	public static Image getImage(){
+	public static List<Point> getPoints() {
+		List<Point> points = new ArrayList<Point>();
+		for (int x = lastSelection.x; x < lastSelection.x + lastSelection.width; x++)
+			for (int y = lastSelection.y; y < lastSelection.y + lastSelection.height; y++)
+				points.add(new Point(x, y));
+		return points;
+	}
+	
+	public static Image getImage() {
 		return image;
 	}
 }

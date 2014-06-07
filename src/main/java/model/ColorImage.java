@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import model.Channel.Point3D;
@@ -517,7 +518,8 @@ public class ColorImage implements Image, Cloneable {
 		this.blue.applyMask(mask);
 	}
 
-	public void applyMasksAndSynth(SynthesisFunction func, Mask mask1, Mask mask2) {
+	public void applyMasksAndSynth(SynthesisFunction func, Mask mask1,
+			Mask mask2) {
 		Image copy = clone();
 
 		this.applyMask(mask1);
@@ -539,10 +541,10 @@ public class ColorImage implements Image, Cloneable {
 		}
 
 		this.red.synthesize(func, redChnls);
-		this.green.synthesize(func,greenChnls);
-		this.blue.synthesize(func,blueChnls);
+		this.green.synthesize(func, greenChnls);
+		this.blue.synthesize(func, blueChnls);
 	}
-	
+
 	public void markZeroCrossers() {
 		this.red.markZeroCrossers();
 		this.green = this.red;
@@ -582,8 +584,8 @@ public class ColorImage implements Image, Cloneable {
 	}
 
 	public void borderWithNoMaximumsDeletion(int[][] derivationDirections) {
-		this.applyMasksAndSynth(new ModuleSynth() ,MaskFactory.sobelMask(), MaskFactory
-				.sobelMask().turn().turn());
+		this.applyMasksAndSynth(new ModuleSynth(), MaskFactory.sobelMask(),
+				MaskFactory.sobelMask().turn().turn());
 		this.red.deleteNotMaximums(derivationDirections);
 		this.green = this.red;
 		this.blue = this.red;
@@ -594,7 +596,7 @@ public class ColorImage implements Image, Cloneable {
 		this.green.histeresisThreshold(t1, t2);
 		this.blue.histeresisThreshold(t1, t2);
 	}
-	
+
 	public double otsuThreshold() {
 		return red.otsuThreshold();
 	}
@@ -604,30 +606,31 @@ public class ColorImage implements Image, Cloneable {
 		green.contrast(r1, r2, y1, y2);
 		blue.contrast(r1, r2, y1, y2);
 	}
-	
+
 	public void applySusan(Mask mask, double threshold) {
 		this.red.applySusan(mask, threshold, 0, 0, Channel.MAX_CHANNEL_COLOR);
 		this.green.applySusan(mask, threshold, 0, 0, 0);
 		this.blue.applySusan(mask, threshold, 0, Channel.MAX_CHANNEL_COLOR, 0);
 	}
 
-	public HashMap<Double, Double> applyHough(int granularityTita, int granularityRo, double threshold, int totalLines) {
-		return this.red.applyHough(granularityTita, granularityRo, threshold, totalLines);
-		
+	public HashMap<Double, Double> applyHough(int granularityTita,
+			int granularityRo, double threshold, int totalLines) {
+		return this.red.applyHough(granularityTita, granularityRo, threshold,
+				totalLines);
+
 	}
-	
+
 	public void drawHoughLines(HashMap<Double, Double> roTitas, double threshold) {
 		this.red.drawLines(roTitas, threshold);
 	}
-	
 
-	public Set<Point3D> applyCircleHough(int granularityA, int granularityB, int granularityR,
-			double threshold, int totalLines) {
-		return this.red.applyCircleHough(granularityA, granularityB, granularityR,
-				threshold, totalLines);
-		
+	public Set<Point3D> applyCircleHough(int granularityA, int granularityB,
+			int granularityR, double threshold, int totalLines) {
+		return this.red.applyCircleHough(granularityA, granularityB,
+				granularityR, threshold, totalLines);
+
 	}
-	
+
 	public void drawHoughCircles(Set<Point3D> abr, double threshold) {
 		this.red.drawCircles(abr, threshold);
 	}
@@ -692,4 +695,89 @@ public class ColorImage implements Image, Cloneable {
 					points.add(new Point(x, y));
 		return points;
 	}
+
+	// --------------------------------------------------------------
+	// --------------------------------------------------------------
+	// --------------------------------------------------------------
+	// --------------------------------------------------------------
+	public void tracking(Tracker tracker) {
+		List<Point> in = tracker.getInner();
+		List<Point> out = tracker.getOuter();
+
+		double[] averageIn = getAverage(in);
+		double[] averageOut = getAverage(out);
+
+		List<Point> lOut = tracker.getOuterBorder();
+		for (Point p : lOut) {
+			if (Fd(p, averageIn, averageOut) > 0) {
+				tracker.setInnerBorder(p.x, p.y);
+				for (Point point : tracker.neighbours(p)) {
+					if (tracker.isOuter(point)) {
+						tracker.setOuterBorder(point.x, point.y);
+					}
+				}
+				for (Point point : tracker.neighbours(p)) {
+					if (tracker.isInnerBorder(point)) {
+						tracker.setInner(point.x, point.y);
+					}
+				}
+			}
+		}
+		List<Point> lIn = tracker.getInnerBorder();
+		for (Point p : lIn) {
+			if (Fd(p, averageIn, averageOut) < 0) {
+				tracker.setOuterBorder(p.x, p.y);
+				for (Point point : tracker.neighbours(p)) {
+					if (tracker.isInner(point)) {
+						tracker.setInnerBorder(point.x, point.y);
+					}
+				}
+				for (Point point : tracker.neighbours(p)) {
+					if (tracker.isOuterBorder(point)) {
+						tracker.setOuter(point.x, point.y);
+					}
+				}
+			}
+		}
+	}
+
+	private double[] getAverage(List<Point> l) {
+		double[] ret = new double[3];
+		ret[0] = 0;
+		ret[1] = 0;
+		ret[2] = 0;
+		for (Point c : l) {
+			ret[0] += this.red.getPixel(c.x, c.y);
+		}
+		ret[0] = ret[0] / l.size();
+
+		for (Point c : l) {
+			ret[1] += this.green.getPixel(c.x, c.y);
+		}
+		ret[1] = ret[1] / l.size();
+
+		for (Point c : l) {
+			ret[2] += this.blue.getPixel(c.x, c.y);
+		}
+		ret[2] = ret[2] / l.size();
+
+		return ret;
+	}
+
+	private double Fd(Point p, double[] averageIn, double[] averageOut) {
+		double p1, p2;
+		double red, green, blue;
+		red = this.red.getPixel(p.x, p.y);
+		green = this.green.getPixel(p.x, p.y);
+		blue = this.blue.getPixel(p.x, p.y);
+
+		p1 = Math.sqrt(Math.pow((averageIn[0] - red), 2)
+				+ Math.pow((averageIn[1] - green), 2)
+				+ Math.pow((averageIn[2] - blue), 2));
+		p2 = Math.sqrt(Math.pow((averageOut[0] - red), 2)
+				+ Math.pow((averageOut[1] - green), 2)
+				+ Math.pow((averageOut[2] - blue), 2));
+		return p2 - p1;
+	}
+
 }
