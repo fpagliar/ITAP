@@ -20,9 +20,8 @@ public class Tracker {
 		values = new int[width][height];
 		this.height = height;
 		this.width = width;
-
-		for (int x = 0; x < height; x++)
-			for (int y = 0; y < width; y++)
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++)
 				setOuter(x, y);
 		
 		for(Point p: selection)
@@ -65,8 +64,8 @@ public class Tracker {
 	}
 
 	public boolean validPixel(int x, int y) {
-		boolean validX = (x >= 0) && (x < height);
-		boolean validY = (y >= 0) && (y < width);
+		boolean validX = (x >= 0) && (x < width);
+		boolean validY = (y >= 0) && (y < height);
 		return validX && validY;
 	}
 
@@ -108,8 +107,8 @@ public class Tracker {
 
 	public List<Point> getOuterBorder() {
 		List<Point> border = new ArrayList<Point>();
-		for (int x = 0; x < height; x++) {
-			for (int y = 0; y < width; y++)
+		for (int x = 0; x < width; x++){
+			for (int y = 0; y < height; y++)
 				if (isOuterBorder(x, y)) {
 					border.add(new Point(x, y));
 				}
@@ -119,8 +118,8 @@ public class Tracker {
 
 	public List<Point> getInnerBorder() {
 		List<Point> border = new ArrayList<Point>();
-		for (int x = 0; x < height; x++) {
-			for (int y = 0; y < width; y++)
+		for (int x = 0; x < width; x++){
+			for (int y = 0; y < height; y++)
 				if (isInnerBorder(x, y)) {
 					border.add(new Point(x, y));
 				}
@@ -130,8 +129,8 @@ public class Tracker {
 
 	public List<Point> getInner() {
 		List<Point> list = new ArrayList<Point>();
-		for (int x = 0; x < height; x++) {
-			for (int y = 0; y < width; y++)
+		for (int x = 0; x < width; x++){
+			for (int y = 0; y < height; y++)
 				if (isInner(x, y)) {
 					list.add(new Point(x, y));
 				}
@@ -139,10 +138,29 @@ public class Tracker {
 		return list;
 	}
 
+	public List<Point> getSuperInner() {
+		List<Point> list = new ArrayList<Point>();
+		for (int x = 0; x < width; x++){
+			for (int y = 0; y < height; y++)
+				if (isInner(x, y)) {
+					list.add(new Point(x, y));
+				}
+		}
+		List<Point> other = new ArrayList<Point>();
+		for(Point p : list){
+			for(Point n : neighbours(p)){
+				if(isInnerBorder(n))
+					other.add(p);
+			}
+		}
+		list.removeAll(other);
+		return list;
+	}
+
 	public List<Point> getOuter() {
 		List<Point> list = new ArrayList<Point>();
-		for (int x = 0; x < height; x++) {
-			for (int y = 0; y < width; y++)
+		for (int x = 0; x < width; x++){
+			for (int y = 0; y < height; y++)
 				if (isOuter(x, y)) {
 					list.add(new Point(x, y));
 				}

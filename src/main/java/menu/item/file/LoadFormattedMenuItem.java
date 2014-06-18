@@ -34,7 +34,6 @@ public class LoadFormattedMenuItem extends JMenuItem {
 				chooser.showOpenDialog(null);
 				
 				File file = chooser.getSelectedFile();
-	
 				Panel panel = window.getFocusedPanel();
 				if (file != null) {
 					Image image = null;

@@ -700,10 +700,11 @@ public class ColorImage implements Image, Cloneable {
 	// --------------------------------------------------------------
 	// --------------------------------------------------------------
 	// --------------------------------------------------------------
-	public void tracking(Tracker tracker) {
+	public boolean tracking(Tracker tracker) {
 		List<Point> in = tracker.getInner();
 		List<Point> out = tracker.getOuter();
-
+		boolean changes = false;
+			
 		double[] averageIn = getAverage(in);
 		double[] averageOut = getAverage(out);
 
@@ -721,6 +722,7 @@ public class ColorImage implements Image, Cloneable {
 						tracker.setInner(point.x, point.y);
 					}
 				}
+				changes = true;				
 			}
 		}
 		List<Point> lIn = tracker.getInnerBorder();
@@ -737,8 +739,10 @@ public class ColorImage implements Image, Cloneable {
 						tracker.setOuter(point.x, point.y);
 					}
 				}
+				changes = true;
 			}
 		}
+		return changes;
 	}
 
 	private double[] getAverage(List<Point> l) {

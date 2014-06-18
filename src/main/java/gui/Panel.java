@@ -5,11 +5,13 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import model.Image;
+import utils.Line;
 
 public class Panel extends JPanel {
 
@@ -19,6 +21,7 @@ public class Panel extends JPanel {
 	private int id;
 	JMenuItem menuItem;
 	private static int id_seq = 1;
+	public List<Line> lines;
 
 	public Panel(Window window) {
 		this.window = window;
@@ -62,6 +65,11 @@ public class Panel extends JPanel {
 			BufferedImage bufferedImage = image.getImage();
 			g.drawImage(bufferedImage, 0, 0, null);
 		}
+		if(lines != null)
+			for(Line line : lines) {
+				g.setColor(Color.RED);
+				g.drawLine(line.getX0(), line.getY0(), line.getX1(), line.getY1());
+			}
 
 	}
 

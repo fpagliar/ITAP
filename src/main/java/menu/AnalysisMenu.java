@@ -8,6 +8,7 @@ import menu.item.analysis.GlobalThresholdMenuItem;
 import menu.item.analysis.HistogramMenuItem;
 import menu.item.analysis.ImageTrackingMenuItem;
 import menu.item.analysis.OtsuThresholdMenuItem;
+import menu.item.analysis.VideoTrackingMenuItem;
 
 public class AnalysisMenu extends JMenu {
 
@@ -21,5 +22,6 @@ public class AnalysisMenu extends JMenu {
 		this.add(new GlobalThresholdMenuItem(window));
 		this.add(new OtsuThresholdMenuItem(window));
 		this.add(new ImageTrackingMenuItem(window));
+		this.add(new VideoTrackingMenuItem(window));
 	}
 }

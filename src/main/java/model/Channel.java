@@ -469,7 +469,7 @@ public class Channel implements Cloneable {
 	}
 
 	public void drawLine(double tita, double ro, double threshold) {
-		// System.out.println("ro:" + ro + " tita:" + tita);
+		System.out.println("ro:" + ro + " tita:" + tita);
 		for (int x = 0; x < width; x++) {
 			int y = (int) ((ro - x * Math.cos(tita)) / Math.sin(tita));
 			// System.out.println(y);

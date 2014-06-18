@@ -33,13 +33,17 @@ public class ImageTrackingMenuItem extends JMenuItem {
 
 				int times = (int) (1.5 * Math.max(image.getHeight(),
 						image.getWidth()));
-				for (int i = 0; i < times; i++) {
-					image.tracking(tracker);
+				boolean changes = true;
+				for (int i = 0; i < times && changes; i++) {
+					changes = image.tracking(tracker);
 					Image shown = image.clone();
 					tracker.markImage(shown);
 					window.getUnfocusedPanel().setImage(shown);
 					window.getUnfocusedPanel().paint(window.getUnfocusedPanel().getGraphics());
+					System.out.println("i:" + i);
 				}
+				if(!changes)
+					System.out.println("got out for lack of changes, total:" + times);
 			}
 		});
 	}
