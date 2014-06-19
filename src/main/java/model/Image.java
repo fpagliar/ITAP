@@ -5,9 +5,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import model.Channel.Point3D;
+import mpi.cbg.fly.Feature;
 import utils.Mask;
 
 public interface Image {
@@ -133,4 +135,6 @@ public interface Image {
 	public double otsuThreshold();
 
 	boolean tracking(Tracker tita);
-}
+	void applyHarrisCornerDetector(int masksize, double sigma, double r, double k);
+	void detectFeatures(List<Feature> features);
+	}

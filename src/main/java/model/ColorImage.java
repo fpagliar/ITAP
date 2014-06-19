@@ -11,8 +11,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import model.Channel.Point3D;
+import mpi.cbg.fly.Feature;
+import mpi.cbg.fly.SIFT;
 import utils.Mask;
 import utils.MaskFactory;
 import utils.RandomNumberGenerator;
@@ -783,5 +786,31 @@ public class ColorImage implements Image, Cloneable {
 				+ Math.pow((averageOut[2] - blue), 2));
 		return p2 - p1;
 	}
-
+	
+    
+	public void applyHarrisCornerDetector(int masksize, double sigma, double r, double k) {
+		List<java.awt.Point> points = red.applyHarrisCornerDetector(masksize, sigma, r, k);
+		for (java.awt.Point point : points) {
+			System.out.println(point.x + " " + point.y);
+			paintSquare(point);
+		}
+	}
+	
+	private void paintSquare(Point point) {
+		for(int i = -1; i < 2; i++) {
+			for(int j = -1; j < 2; j++) {
+				if(red.validPixel(point.x + i, point.y + j)) {
+//					this.setRGBPixel(point.x+i, point.y+j, Color.RED.getRGB());
+					this.setPixel(point.x+i, point.y+j, Color.RED);
+				}
+			}
+		}
+	}
+	
+    public void detectFeatures(List<Feature> features) {
+    	for(Feature f: features){
+          setPixel((int)f.location[0],(int) f.location[1], Color.RED);
+    		
+    	}
+    }    
 }
