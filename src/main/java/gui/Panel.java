@@ -67,6 +67,7 @@ public class Panel extends JPanel {
 		}
 		if(lines != null)
 			for(Line line : lines) {
+				System.out.println("Printing line - x1:" + line.getX0() + " y1:" + line.getY0() + " x2:" + line.getX1() + " y2:" + line.getY1());
 				g.setColor(Color.RED);
 				g.drawLine(line.getX0(), line.getY0(), line.getX1(), line.getY1());
 			}

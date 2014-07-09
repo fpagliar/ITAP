@@ -88,7 +88,9 @@ public class HoughMenuItem extends JMenuItem {
 //									int y0 = (int) ((ro - 0 * Math.cos(roTitas.get(ro))) / Math.sin(roTitas.get(ro)));
 //									int y1 = (int) ((ro - 1 * Math.cos(roTitas.get(ro))) / Math.sin(roTitas.get(ro)));
 //									System.out.println("Drawing: y0 - " +  y0 + " y1 - " + y1);
-									window.getUnfocusedPanel().lines.add(new Line(roTitas.get(ro), ro));
+									try{
+										window.getUnfocusedPanel().lines.add(new Line(roTitas.get(ro), ro, withLines.getWidth(), withLines.getHeight()));
+									} catch(Exception e){}
 //									g.drawLine(0, 0, 100, 100);
 								}
 //								window.getUnfocusedPanel().paintComponent(g);

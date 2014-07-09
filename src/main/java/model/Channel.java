@@ -17,6 +17,12 @@ public class Channel implements Cloneable {
 
 	private int width;
 	private int height;
+	
+	private double maxChannelValue;
+	private double minChannelValue;
+	private boolean truncateFlag = false;
+	private int counter = 0;
+	public boolean TRUNCATE_ON = false;
 
 	// The matrix is represented by an array, and to get a pixel(x,y) make y *
 	// this.getWidth() + x
@@ -31,6 +37,8 @@ public class Channel implements Cloneable {
 		this.width = width;
 		this.height = height;
 		this.channel = new double[width * height];
+		maxChannelValue = MAX_CHANNEL_COLOR;
+		minChannelValue = MIN_CHANNEL_COLOR;
 	}
 
 	/**
@@ -75,10 +83,35 @@ public class Channel implements Cloneable {
 		if (!validPixel(x, y)) {
 			throw new IndexOutOfBoundsException();
 		}
-
+//		if(truncateFlag) {
+//			if(color > maxChannelValue)
+//				maxChannelValue = color;
+//			if(color < minChannelValue)
+//				minChannelValue = color;
+//			if(channel[y * this.getWidth() + x] == maxChannelValue || channel[y * this.getWidth() + x] == minChannelValue)
+//				recalculateMaxMin();
+//		}
+//		if(TRUNCATE_ON)
+//			System.out.println("SETTING PIXEL");
+		truncateFlag = true;
 		channel[y * this.getWidth() + x] = color;
 	}
 
+	private void recalculateMaxMin() {
+		System.out.println("RECALCULATING: " + counter++);
+		double max = channel[0], min = channel[0];
+		for (int x = 0; x < width ; x++)
+			for (int y = 0; y < height ; y++) {
+				double color = this.getPixel(x, y);
+				if(color > max)
+					max = color;
+				if(color < min)
+					min = color;
+			}
+		maxChannelValue = max;
+		minChannelValue = min;
+	}
+	
 	/**
 	 * Returns a pixel in the position x,y
 	 * 
@@ -94,13 +127,16 @@ public class Channel implements Cloneable {
 		return channel[y * this.getWidth() + x];
 	}
 
-	int truncatePixel(double originalValue) {
-		if (originalValue > Channel.MAX_CHANNEL_COLOR) {
-			return Channel.MAX_CHANNEL_COLOR;
-		} else if (originalValue < Channel.MIN_CHANNEL_COLOR) {
-			return Channel.MIN_CHANNEL_COLOR;
+	int truncatePixel(double originalValue) {		
+		if(TRUNCATE_ON){
+			if(truncateFlag) {
+				truncateFlag = false;
+				recalculateMaxMin();
+			}
+			return (int) ((originalValue - minChannelValue) / ((maxChannelValue - minChannelValue) / MAX_CHANNEL_COLOR));
 		}
-		return (int) originalValue;
+	
+		return (originalValue > MAX_CHANNEL_COLOR)? MAX_CHANNEL_COLOR : (originalValue < MIN_CHANNEL_COLOR)? MIN_CHANNEL_COLOR : (int) originalValue;
 	}
 
 	public void add(Channel otherChannel) {
@@ -293,6 +329,7 @@ public class Channel implements Cloneable {
 			result[x] = func.apply(colors);
 		}
 		this.channel = result;
+		recalculateMaxMin();
 	}
 
 	/**
@@ -625,6 +662,49 @@ public class Channel implements Cloneable {
 		return ((threshold1 + threshold2) / 2.0);
 	}
 
+//    public double otsuThreshold() {
+//
+//        int[] histogram = getHistogram();
+//        int total = channel.length;
+//
+//        float sum = 0;
+//        for (int i = 0; i < 256; i++) {
+//            sum += i * histogram[i];
+//        }
+//
+//        float sumB = 0;
+//        int wB = 0;
+//        int wF = 0;
+//
+//        float varMax = 0;
+//        int threshold = 0;
+//
+//        for (int i = 0; i < 256; i++) {
+//            wB += histogram[i];
+//            if (wB == 0) {
+//                continue;
+//            }
+//            wF = total - wB;
+//
+//            if (wF == 0) {
+//                break;
+//            }
+//
+//            sumB += i * histogram[i];
+//            float mB = sumB / wB;
+//            float mF = (sum - sumB) / wF;
+//
+//            float varBetween = (float) wB * (float) wF * (mB - mF) * (mB - mF);
+//
+//            if (varBetween > varMax) {
+//                varMax = varBetween;
+//                threshold = i;
+//            }
+//        }
+//        System.out.println("T = " + threshold);
+////        umbral(threshold);
+//        return threshold;
+//    }
 	public void applyThreshold(double value) {
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < height; y++) {
@@ -686,244 +766,291 @@ public class Channel implements Cloneable {
 	//---------------------------------------------------------------------------------------------------------
 	//---------------------------------------------------------------------------------------------------------
 	//---------------------------------------------------------------------------------------------------------
-	private class Corner {
-		int x, y;
-		double measure;
+//	private class Corner {
+//		int x, y;
+//		double measure;
+//
+//		public Corner(int x, int y, double measure) {
+//			this.x = x;
+//			this.y = y;
+//			this.measure = measure;
+//		}
+//	}
+//	
+//	public List<java.awt.Point> applyHarrisCornerDetector(int maskSize, double sigma, double r,
+//			double k) {
+//		double[][] Lx2 = new double[width][height];
+//		double[][] Ly2 = new double[width][height];
+//		double[][] Lxy = new double[width][height];
+//		
+//		List<Corner> corners = new ArrayList<Corner>();
+//
+//		// precompute derivatives
+//		computeDerivatives(maskSize, sigma, Lx2, Ly2, Lxy);
+//
+//		// Harris measure map
+//		double[][] harrismap = computeHarrisMap(k, Lx2, Ly2, Lxy);
+//		
+//		// for each pixel in the hmap, keep the local maxima
+//		for (int y = 1; y < this.height - 1; y++) {    public void otsuThreshold() {
 
-		public Corner(int x, int y, double measure) {
-			this.x = x;
-			this.y = y;
-			this.measure = measure;
-		}
-	}
-	
-	public List<java.awt.Point> applyHarrisCornerDetector(int maskSize, double sigma, double r,
-			double k) {
-		double[][] Lx2 = new double[width][height];
-		double[][] Ly2 = new double[width][height];
-		double[][] Lxy = new double[width][height];
-		
-		List<Corner> corners = new ArrayList<Corner>();
-
-		// precompute derivatives
-		computeDerivatives(maskSize, sigma, Lx2, Ly2, Lxy);
-
-		// Harris measure map
-		double[][] harrismap = computeHarrisMap(k, Lx2, Ly2, Lxy);
-		
-		// for each pixel in the hmap, keep the local maxima
-		for (int y = 1; y < this.height - 1; y++) {
-			for (int x = 1; x < this.width - 1; x++) {
-				double h = harrismap[x][y];
-				if (h < r)
-					continue;
-				if (!isSpatialMaxima(harrismap, (int) x, (int) y))
-					continue;
-				// add the corner to the list
-				corners.add(new Corner(x, y, h));
-			}
-		}
-
-		// remove corners to close to each other (keep the highest measure)
-		Iterator<Corner> iter = corners.iterator();
-		while (iter.hasNext()) {
-			Corner p = iter.next();
-			for (Corner n : corners) {
-				if (n == p)
-					continue;
-				int dist = (int) Math.sqrt((p.x - n.x) * (p.x - n.x)
-						+ (p.y - n.y) * (p.y - n.y));
-				if (dist > 3)
-					continue;
-				if (n.measure < p.measure)
-					continue;
-				iter.remove();
-				break;
-			}
-		}
-
-		// Display corners over the image (cross)
-//		for (Corner p : corners) {
-//			for (int dx = -2; dx <= 2; dx++) {
-//				if (p.x + dx < 0 || p.x + dx >= width)
+//    int[] histogram = imageHistogram();
+//    int total = values.length;
+//
+//    float sum = 0;
+//    for (int i = 0; i < 256; i++) {
+//        sum += i * histogram[i];
+//    }
+//
+//    float sumB = 0;
+//    int wB = 0;
+//    int wF = 0;
+//
+//    float varMax = 0;
+//    int threshold = 0;
+//
+//    for (int i = 0; i < 256; i++) {
+//        wB += histogram[i];
+//        if (wB == 0) {
+//            continue;
+//        }
+//        wF = total - wB;
+//
+//        if (wF == 0) {
+//            break;
+//        }
+//
+//        sumB += i * histogram[i];
+//        float mB = sumB / wB;
+//        float mF = (sum - sumB) / wF;
+//
+//        float varBetween = (float) wB * (float) wF * (mB - mF) * (mB - mF);
+//
+//        if (varBetween > varMax) {
+//            varMax = varBetween;
+//            threshold = i;
+//        }
+//    }
+//    System.out.println("T = " + threshold);
+//    umbral(threshold);
+//
+//}
+//			for (int x = 1; x < this.width - 1; x++) {
+//				double h = harrismap[x][y];
+//				if (h < r)
 //					continue;
-//				setInsidePixel(output, (int) p.x + dx, (int) p.y, canal, 255);
-//			}
-//			for (int dy = -2; dy <= 2; dy++) {
-//				if (p.y + dy < 0 || p.y + dy >= height)
+//				if (!isSpatialMaxima(harrismap, (int) x, (int) y))
 //					continue;
-//				setInsidePixel(output, (int) p.x, (int) p.y + dy, canal, 255);
+//				// add the corner to the list
+//				corners.add(new Corner(x, y, h));
+//			} Only you can see your history 
+//		}
+//
+//		// remove corners to close to each other (keep the highest measure)
+//		Iterator<Corner> iter = corners.iterator();
+//		while (iter.hasNext()) {
+//			Corner p = iter.next();
+//			for (Corner n : corners) {
+//				if (n == p)
+//					continue;
+//				int dist = (int) Math.sqrt((p.x - n.x) * (p.x - n.x)
+//						+ (p.y - n.y) * (p.y - n.y));
+//				if (dist > 3)
+//					continue;
+//				if (n.measure < p.measure)
+//					continue;
+//				iter.remove();
+//				break;
 //			}
 //		}
-		List<Point> points = new ArrayList<Point>();
-		for (Corner corner : corners) {
-			points.add(new Point(corner.x, corner.y));
-		}
-		return points;
-
-	}
-	
-	
-	private void computeDerivatives(int radius, double sigma, double[][] Lx2,
-			double[][] Ly2, double[][] Lxy) {
-
-		// gradient values: Gx,Gy
-		double[][][] grad = new double[width][height][];
-		for (int y = 0; y < this.height; y++)
-			for (int x = 0; x < this.width; x++)
-				grad[x][y] = sobel(x, y);
-
-		// precompute the coefficients of the gaussian filter
-		double[][] filter = new double[2 * radius + 1][2 * radius + 1];
-		double filtersum = 0;
-		for (int j = -radius; j <= radius; j++) {
-			for (int i = -radius; i <= radius; i++) {
-				double g = gaussian(i, j, sigma);
-				filter[i + radius][j + radius] = g;
-				filtersum += g;
-			}
-		}
-
-		// Convolve gradient with gaussian filter:
-		//
-		// Ix2 = (F) * (Gx^2)
-		// Iy2 = (F) * (Gy^2)
-		// Ixy = (F) * (Gx.Gy)
-		//
-		for (int y = 0; y < this.height; y++) {
-			for (int x = 0; x < this.width; x++) {
-
-				for (int dy = -radius; dy <= radius; dy++) {
-					for (int dx = -radius; dx <= radius; dx++) {
-						int xk = x + dx;
-						int yk = y + dy;
-						if (xk < 0 || xk >= this.width)
-							continue;
-						if (yk < 0 || yk >= this.height)
-							continue;
-
-						// filter weight
-						double f = filter[dx + radius][dy + radius];
-
-						// convolution
-						Lx2[x][y] += f * grad[xk][yk][0] * grad[xk][yk][0];
-						Ly2[x][y] += f * grad[xk][yk][1] * grad[xk][yk][1];
-						Lxy[x][y] += f * grad[xk][yk][0] * grad[xk][yk][1];
-					}
-				}
-				Lx2[x][y] /= filtersum;
-				Ly2[x][y] /= filtersum;
-				Lxy[x][y] /= filtersum;
-			}
-		}
-	}
-	
-	
-	private double[][] computeHarrisMap(double k, double[][] Lx2,
-			double[][] Ly2, double[][] Lxy) {
-
-		// Harris measure map
-		double[][] harrismap = new double[width][height];
-		double max = 0;
-
-		// for each pixel in the image
-		for (int y = 0; y < this.height; y++) {
-			for (int x = 0; x < this.width; x++) {
-				// compute ans store the harris measure
-				harrismap[x][y] = harrisMeasure(x, y, k, Lx2, Ly2, Lxy);
-				if (harrismap[x][y] > max)
-					max = harrismap[x][y];
-			}
-		}
-
-		// rescale measures in 0-100
-		for (int y = 0; y < this.height; y++) {
-			for (int x = 0; x < this.width; x++) {
-				double h = harrismap[x][y];
-				if (h < 0)
-					h = 0;
-				else
-					h = 100 * Math.log(1 + h) / Math.log(1 + max);
-				harrismap[x][y] = h;
-			}
-		}
-
-		return harrismap;
-	}
-
-	
-	private double harrisMeasure(int x, int y, double k, double[][] Lx2,
-			double[][] Ly2, double[][] Lxy) {
-		// matrix elements (normalized)
-		double m00 = Lx2[x][y];
-		double m01 = Lxy[x][y];
-		double m10 = Lxy[x][y];
-		double m11 = Ly2[x][y];
-
-		// Harris corner measure = det(M)-lambda.trace(M)^2
-
-		return m00 * m11 - m01 * m10 - k * (m00 + m11) * (m00 + m11);
-	}
-	
-	private boolean isSpatialMaxima(double[][] hmap, int x, int y) {
-		int n = 8;
-		int[] dx = new int[] { -1, 0, 1, 1, 1, 0, -1, -1 };
-		int[] dy = new int[] { -1, -1, -1, 0, 1, 1, 1, 0 };
-		double w = hmap[x][y];
-		for (int i = 0; i < n; i++) {
-			double wk = hmap[x + dx[i]][y + dy[i]];
-			if (wk >= w)
-				return false;
-		}
-		return true;
-	}
-	
-	private double[] sobel(int x, int y) {
-		int v00 = 0, v01 = 0, v02 = 0, v10 = 0, v12 = 0, v20 = 0, v21 = 0, v22 = 0;
-
-		int x0 = x - 1, x1 = x, x2 = x + 1;
-		int y0 = y - 1, y1 = y, y2 = y + 1;
-		if (x0 < 0)
-			x0 = 0;
-		if (y0 < 0)
-			y0 = 0;
-		if (x2 >= width)
-			x2 = width - 1;
-		if (y2 >= height)
-			y2 = height - 1;
-
-		v00 = (int) getInsidePixel(x0, y0);
-		v10 = (int) getInsidePixel(x1, y0);
-		v20 = (int) getInsidePixel(x2, y0);
-		v01 = (int) getInsidePixel(x0, y1);
-		v21 = (int) getInsidePixel(x2, y1);
-		v02 = (int) getInsidePixel(x0, y2);
-		v12 = (int) getInsidePixel(x1, y2);
-		v22 = (int) getInsidePixel(x2, y2);
-
-		double sx = (v20 + 2 * v21 + v22) - (v00 + 2 * v01 + v02);
-		double sy = (v02 + 2 * v12 + v22) - (v00 + 2 * v10 + v20);
-		return new double[] { sx / 4, sy / 4 };
-	}
-	
-	public double getInsidePixel(int x, int y) {
-		if (!validPixel(x, y)) {
-			return 0;
-		}
-
-		return channel[y * this.getWidth() + x];
-	}
-
-	public void setInsidePixel(int x, int y, double color) {
-		if (validPixel(x, y)) {
-			channel[y * this.getWidth() + x] = color;
-		}
-	}
-	
-	private double gaussian(double x, double y, double sigma2) {
-		double t = (x * x + y * y) / (2 * sigma2);
-		double u = 1.0 / (2 * Math.PI * sigma2);
-		double e = u * Math.exp(-t);
-		return e;
-	}
+//
+//		// Display corners over the image (cross)
+////		for (Corner p : corners) {
+////			for (int dx = -2; dx <= 2; dx++) {
+////				if (p.x + dx < 0 || p.x + dx >= width)
+////					continue;
+////				setInsidePixel(output, (int) p.x + dx, (int) p.y, canal, 255);
+////			}
+////			for (int dy = -2; dy <= 2; dy++) {
+////				if (p.y + dy < 0 || p.y + dy >= height)
+////					continue;
+////				setInsidePixel(output, (int) p.x, (int) p.y + dy, canal, 255);
+////			}
+////		}
+//		List<Point> points = new ArrayList<Point>();
+//		for (Corner corner : corners) {
+//			points.add(new Point(corner.x, corner.y));
+//		}
+//		return points;
+//
+//	}
+//	
+//	
+//	private void computeDerivatives(int radius, double sigma, double[][] Lx2,
+//			double[][] Ly2, double[][] Lxy) {
+//
+//		// gradient values: Gx,Gy
+//		double[][][] grad = new double[width][height][];
+//		for (int y = 0; y < this.height; y++)
+//			for (int x = 0; x < this.width; x++)
+//				grad[x][y] = sobel(x, y);
+//
+//		// precompute the coefficients of the gaussian filter
+//		double[][] filter = new double[2 * radius + 1][2 * radius + 1];
+//		double filtersum = 0;
+//		for (int j = -radius; j <= radius; j++) {
+//			for (int i = -radius; i <= radius; i++) {
+//				double g = gaussian(i, j, sigma);
+//				filter[i + radius][j + radius] = g;
+//				filtersum += g;
+//			}
+//		}
+//
+//		// Convolve gradient with gau
+//	}
+//
+//	// remove corners to close to each other (keep the highest measure)
+//	Iterator<Corner> iter = corners.iterator();
+//	while (iter.hasNext()) {ssian filter:
+//		//
+//		// Ix2 = (F) * (Gx^2)
+//		// Iy2 = (F) * (Gy^2)
+//		// Ixy = (F) * (Gx.Gy)
+//		//
+//		for (int y = 0; y < this.height; y++) {
+//			for (int x = 0; x < this.width; x++) {
+//
+//				for (int dy = -radius; dy <= radius; dy++) {
+//					for (int dx = -radius; dx <= radius; dx++) {
+//						int xk = x + dx;
+//						int yk = y + dy;
+//						if (xk < 0 || xk >= this.width)
+//							continue;
+//						if (yk < 0 || yk >= this.height)
+//							continue;
+//
+//						// filter weight
+//						double f = filter[dx + radius][dy + radius];
+//
+//						// convolution
+//						Lx2[x][y] += f * grad[xk][yk][0] * grad[xk][yk][0];
+//						Ly2[x][y] += f * grad[xk][yk][1] * grad[xk][yk][1];
+//						Lxy[x][y] += f * grad[xk][yk][0] * grad[xk][yk][1];
+//					}
+//				}
+//				Lx2[x][y] /= filtersum;
+//				Ly2[x][y] /= filtersum;
+//				Lxy[x][y] /= filtersum;
+//			}
+//		}
+//	}
+//	
+//	
+//	private double[][] computeHarrisMap(double k, double[][] Lx2,
+//			double[][] Ly2, double[][] Lxy) {
+//
+//		// Harris measure map
+//		double[][] harrismap = new double[width][height];
+//		double max = 0;
+//
+//		// for each pixel in the image
+//		for (int y = 0; y < this.height; y++) {
+//			for (int x = 0; x < this.width; x++) {
+//				// compute ans store the harris measure
+//				harrismap[x][y] = harrisMeasure(x, y, k, Lx2, Ly2, Lxy);
+//				if (harrismap[x][y] > max)
+//					max = harrismap[x][y];
+//			}
+//		}
+//
+//		// rescale measures in 0-100
+//		for (int y = 0; y < this.height; y++) {
+//			for (int x = 0; x < this.width; x++) {
+//				double h = harrismap[x][y];
+//				if (h < 0)
+//					h = 0;
+//				else
+//					h = 100 * Math.log(1 + h) / Math.log(1 + max);
+//				harrismap[x][y] = h;
+//			}
+//		}
+//
+//		return harrismap;
+//	}
+//
+//	
+//	private double harrisMeasure(int x, int y, double k, double[][] Lx2,
+//			double[][] Ly2, double[][] Lxy) {
+//		// matrix elements (normalized)
+//		double m00 = Lx2[x][y];
+//		double m01 = Lxy[x][y];
+//		double m10 = Lxy[x][y];
+//		double m11 = Ly2[x][y];
+//
+//		// Harris corner measure = det(M)-lambda.trace(M)^2
+//
+//		return m00 * m11 - m01 * m10 - k * (m00 + m11) * (m00 + m11);
+//	}
+//	
+//	private boolean isSpatialMaxima(double[][] hmap, int x, int y) {
+//		int n = 8;
+//		int[] dx = new int[] { -1, 0, 1, 1, 1, 0, -1, -1 };
+//		int[] dy = new int[] { -1, -1, -1, 0, 1, 1, 1, 0 };
+//		double w = hmap[x][y];
+//		for (int i = 0; i < n; i++) {
+//			double wk = hmap[x + dx[i]][y + dy[i]];
+//			if (wk >= w)
+//				return false;
+//		}
+//		return true;
+//	}
+//	
+//	private double[] sobel(int x, int y) {
+//		int v00 = 0, v01 = 0, v02 = 0, v10 = 0, v12 = 0, v20 = 0, v21 = 0, v22 = 0;
+//
+//		int x0 = x - 1, x1 = x, x2 = x + 1;
+//		int y0 = y - 1, y1 = y, y2 = y + 1;
+//		if (x0 < 0)
+//			x0 = 0;
+//		if (y0 < 0)
+//			y0 = 0;
+//		if (x2 >= width)
+//			x2 = width - 1;
+//		if (y2 >= height)
+//			y2 = height - 1;
+//
+//		v00 = (int) getInsidePixel(x0, y0);
+//		v10 = (int) getInsidePixel(x1, y0);
+//		v20 = (int) getInsidePixel(x2, y0);
+//		v01 = (int) getInsidePixel(x0, y1);
+//		v21 = (int) getInsidePixel(x2, y1);
+//		v02 = (int) getInsidePixel(x0, y2);
+//		v12 = (int) getInsidePixel(x1, y2);
+//		v22 = (int) getInsidePixel(x2, y2);
+//
+//		double sx = (v20 + 2 * v21 + v22) - (v00 + 2 * v01 + v02);
+//		double sy = (v02 + 2 * v12 + v22) - (v00 + 2 * v10 + v20);
+//		return new double[] { sx / 4, sy / 4 };
+//	}
+//	
+//	public double getInsidePixel(int x, int y) {
+//		if (!validPixel(x, y)) {
+//			return 0;
+//		}
+//
+//		return channel[y * this.getWidth() + x];
+//	}
+//
+//	public void setInsidePixel(int x, int y, double color) {
+//		if (validPixel(x, y)) {
+//			channel[y * this.getWidth() + x] = color;
+//		}
+//	}
+//	
+//	private double gaussian(double x, double y, double sigma2) {
+//		double t = (x * x + y * y) / (2 * sigma2);
+//		double u = 1.0 / (2 * Math.PI * sigma2);
+//		double e = u * Math.exp(-t);
+//		return e;
+//	}
 }

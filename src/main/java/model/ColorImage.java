@@ -10,12 +10,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.Vector;
 
 import model.Channel.Point3D;
 import mpi.cbg.fly.Feature;
-import mpi.cbg.fly.SIFT;
 import utils.Mask;
 import utils.MaskFactory;
 import utils.RandomNumberGenerator;
@@ -226,7 +225,8 @@ public class ColorImage implements Image, Cloneable {
 	private void applyChanges() {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
-				this.setPixel(x, y, this.getRGBPixel(x, y));
+				image.setRGB(x, y, this.getRGBPixel(x, y).getRGB());
+				// this.setPixel(x, y, this.getRGBPixel(x, y));
 			}
 		}
 	}
@@ -297,6 +297,12 @@ public class ColorImage implements Image, Cloneable {
 		this.red.applyThreshold(value);
 		this.green = this.red.clone();
 		this.blue = this.red.clone();
+	}
+
+	public void applyChannelThreshold(double value) {
+		this.red.applyThreshold(value);
+		this.green.applyThreshold(value);
+		this.blue.applyThreshold(value);
 	}
 
 	public void exponentialNoise(double u) {
@@ -707,7 +713,7 @@ public class ColorImage implements Image, Cloneable {
 		List<Point> in = tracker.getInner();
 		List<Point> out = tracker.getOuter();
 		boolean changes = false;
-			
+
 		double[] averageIn = getAverage(in);
 		double[] averageOut = getAverage(out);
 
@@ -725,7 +731,7 @@ public class ColorImage implements Image, Cloneable {
 						tracker.setInner(point.x, point.y);
 					}
 				}
-				changes = true;				
+				changes = true;
 			}
 		}
 		List<Point> lIn = tracker.getInnerBorder();
@@ -786,31 +792,247 @@ public class ColorImage implements Image, Cloneable {
 				+ Math.pow((averageOut[2] - blue), 2));
 		return p2 - p1;
 	}
-	
-    
-	public void applyHarrisCornerDetector(int masksize, double sigma, double r, double k) {
-		List<java.awt.Point> points = red.applyHarrisCornerDetector(masksize, sigma, r, k);
-		for (java.awt.Point point : points) {
-			System.out.println(point.x + " " + point.y);
-			paintSquare(point);
-		}
-	}
-	
+
+//	public void applyHarrisCornerDetector(int masksize, double sigma, double r,
+//			double k) {
+//		List<java.awt.Point> points = red.applyHarrisCornerDetector(masksize,
+//				sigma, r, k);
+//		for (java.awt.Point point : points) {
+//			System.out.println(point.x + " " + point.y);
+//			paintSquare(point);
+//		}
+//	}
+
 	private void paintSquare(Point point) {
-		for(int i = -1; i < 2; i++) {
-			for(int j = -1; j < 2; j++) {
-				if(red.validPixel(point.x + i, point.y + j)) {
-//					this.setRGBPixel(point.x+i, point.y+j, Color.RED.getRGB());
-					this.setPixel(point.x+i, point.y+j, Color.RED);
+		for (int i = -1; i < 2; i++) {
+			for (int j = -1; j < 2; j++) {
+				if (red.validPixel(point.x + i, point.y + j)) {
+					// this.setRGBPixel(point.x+i, point.y+j,
+					// Color.RED.getRGB());
+					this.setPixel(point.x + i, point.y + j, Color.RED);
 				}
 			}
 		}
 	}
-	
-    public void detectFeatures(List<Feature> features) {
-    	for(Feature f: features){
-          setPixel((int)f.location[0],(int) f.location[1], Color.RED);
-    		
-    	}
-    }    
+
+	public void detectFeatures(List<Feature> features) {
+		for (Feature f : features) {
+			setPixel((int) f.location[0], (int) f.location[1], Color.RED);
+
+		}
+	}
+
+	public Image getHarrisCIM(int maskSize, double sigma, double k) {
+		ColorImage lx = (ColorImage) this.clone();
+		lx.applyMask(MaskFactory.sobelMask());
+		ColorImage ly = (ColorImage) this.clone();
+		ly.applyMask(MaskFactory.sobelMask().turn().turn());
+
+		ColorImage lx2 = (ColorImage) lx.clone().multiply(lx);
+		for (int x = 0; x < lx2.getWidth(); x++)
+			for (int y = 0; y < lx2.getHeight(); y++) {
+				lx2.setPixel(x, y,
+						lx2.applyGaussianFilter(x, y, maskSize, sigma));
+				// lx2.applyGaussianFilter(x, y, maskSize, sigma);
+			}
+
+		ColorImage ly2 = (ColorImage) ly.clone().multiply(ly);
+		for (int x = 0; x < ly2.getWidth(); x++)
+			for (int y = 0; y < ly2.getHeight(); y++) {
+				ly2.setPixel(x, y,
+						ly2.applyGaussianFilter(x, y, maskSize, sigma));
+				// ly2.applyGaussianFilter(x, y, maskSize, sigma);
+			}
+
+		ColorImage lxy = (ColorImage) lx.clone().multiply(ly);
+		lxy.multiply(lxy);
+		for (int x = 0; x < lxy.getWidth(); x++)
+			for (int y = 0; y < lxy.getHeight(); y++) {
+				lxy.setPixel(x, y,
+						lxy.applyGaussianFilter(x, y, maskSize, sigma));
+				// lxy.applyGaussianFilter(x, y, maskSize, sigma);
+			}
+
+		ColorImage cim = (ColorImage) this.clone();
+		for (int i = 0; i < getWidth(); i++)
+			for (int j = 0; j < getHeight(); j++) {
+				double color = lx2.red.getPixel(i, j)
+						* ly2.red.getPixel(i, j)
+						- lxy.red.getPixel(i, j)
+						- k
+						* Math.pow((lx2.red.getPixel(i, j) + ly2.red.getPixel(
+								i, j)), 2);
+				cim.red.setPixel(i, j, color);
+
+				double color2 = lx2.green.getPixel(i, j)
+						* ly2.green.getPixel(i, j)
+						- lxy.green.getPixel(i, j)
+						- k
+						* Math.pow((lx2.green.getPixel(i, j) + ly2.green
+								.getPixel(i, j)), 2);
+				cim.green.setPixel(i, j, color2);
+
+				double color3 = lx2.blue.getPixel(i, j)
+						* ly2.blue.getPixel(i, j)
+						- lxy.blue.getPixel(i, j)
+						- k
+						* Math.pow((lx2.blue.getPixel(i, j) + ly2.blue
+								.getPixel(i, j)), 2);
+				cim.blue.setPixel(i, j, color3);
+				// System.out.println("r:" + color + " g:" + color2 + " b:" +
+				// color3);
+			}
+		cim.red.TRUNCATE_ON = true;
+		cim.green.TRUNCATE_ON = true;
+		cim.blue.TRUNCATE_ON = true;
+		return cim;
+	}
+
+	public List<Object> getHarrisMaxPoints(int maskSize, double sigma,
+			double k, int totalResults) {
+		totalResults = totalResults * getWidth() * getHeight() / 100;
+		System.out.println("totalResults: " + totalResults);
+		ColorImage lx = (ColorImage) this.clone();
+		lx.applyMask(MaskFactory.sobelMask());
+		ColorImage ly = (ColorImage) this.clone();
+		ly.applyMask(MaskFactory.sobelMask().turn().turn());
+
+		ColorImage lx2 = (ColorImage) lx.clone().multiply(lx);
+		for (int x = 0; x < lx2.getWidth(); x++)
+			for (int y = 0; y < lx2.getHeight(); y++) {
+				lx2.setPixel(x, y,
+						lx2.applyGaussianFilter(x, y, maskSize, sigma));
+				// lx2.applyGaussianFilter(x, y, maskSize, sigma);
+			}
+
+		ColorImage ly2 = (ColorImage) ly.clone().multiply(ly);
+		for (int x = 0; x < ly2.getWidth(); x++)
+			for (int y = 0; y < ly2.getHeight(); y++) {
+				ly2.setPixel(x, y,
+						ly2.applyGaussianFilter(x, y, maskSize, sigma));
+				// ly2.applyGaussianFilter(x, y, maskSize, sigma);
+			}
+
+		ColorImage lxy = (ColorImage) lx.clone().multiply(ly);
+		lxy.multiply(lxy);
+		for (int x = 0; x < lxy.getWidth(); x++)
+			for (int y = 0; y < lxy.getHeight(); y++) {
+				lxy.setPixel(x, y,
+						lxy.applyGaussianFilter(x, y, maskSize, sigma));
+				// lxy.applyGaussianFilter(x, y, maskSize, sigma);
+			}
+
+		PriorityQueue<WeightedPoint> queue = new PriorityQueue<WeightedPoint>(
+				totalResults);
+		// ColorImage cim = (ColorImage) this.clone();
+//		HashMap<Double, Point> maximums = new HashMap<Double, Point>();
+		for (int i = 0; i < getWidth(); i++)
+			for (int j = 0; j < getHeight(); j++) {
+				double color = lx2.red.getPixel(i, j)
+						* ly2.red.getPixel(i, j)
+						- lxy.red.getPixel(i, j)
+						- k
+						* Math.pow((lx2.red.getPixel(i, j) + ly2.red.getPixel(
+								i, j)), 2);
+//				boolean flag = false;
+				// for(Double max : maximums.keySet())
+				// if(color > max && !(maximums.size() < totalResults))
+				// flag = true;
+				// if(!flag && maximums.size() < totalResults){
+				// maximums.put(color, new Point(i,j));
+				// flag = true;
+				// }else if(flag) {
+				// deleteMin(maximums);
+				// maximums.put(color, new Point(i,j));
+				// }
+
+				// cim.red.setPixel(i, j, color);
+
+				double color2 = lx2.green.getPixel(i, j)
+						* ly2.green.getPixel(i, j)
+						- lxy.green.getPixel(i, j)
+						- k
+						* Math.pow((lx2.green.getPixel(i, j) + ly2.green
+								.getPixel(i, j)), 2);
+				// cim.green.setPixel(i, j, color2);
+				// for(Double max : maximums.keySet())
+				// if(color2 > max && !(maximums.size() < totalResults))
+				// flag = true;
+				// if(!flag && maximums.size() < totalResults){
+				// maximums.put(color2, new Point(i,j));
+				// flag = true;
+				// }else if(flag) {
+				// deleteMin(maximums);
+				// maximums.put(color2, new Point(i,j));
+				// }
+
+				double color3 = lx2.blue.getPixel(i, j)
+						* ly2.blue.getPixel(i, j)
+						- lxy.blue.getPixel(i, j)
+						- k
+						* Math.pow((lx2.blue.getPixel(i, j) + ly2.blue
+								.getPixel(i, j)), 2);
+				// for(Double max : maximums.keySet())
+				// if(color3 > max && !(maximums.size() < totalResults))
+				// flag = true;
+				// if(!flag && maximums.size() < totalResults){
+				// maximums.put(color3, new Point(i,j));
+				// flag = true;
+				// }else if(flag) {
+				// deleteMin(maximums);
+				// maximums.put(color3, new Point(i,j));
+				// }
+				// cim.blue.setPixel(i, j, color3);
+				// System.out.println("r:" + color + " g:" + color2 + " b:" +
+				// color3);
+				double value = Math.max(Math.max(color, color2), color3);
+				if(queue.size() < totalResults) {
+					queue.add(new WeightedPoint(new Point(i, j), value));
+				}else if(value > queue.peek().value){
+					queue.remove();
+					queue.add(new WeightedPoint(new Point(i, j), value));
+				}					
+//					|| value > queue.peek().value){
+			}
+		// cim.red.TRUNCATE_ON = true;
+		// cim.green.TRUNCATE_ON = true;
+		// cim.blue.TRUNCATE_ON = true;
+		// return cim;
+		return Arrays.asList(queue.toArray());
+	}
+
+	public class WeightedPoint implements Comparable<WeightedPoint> {
+		public final Point p;
+		public final Double value;
+
+		public WeightedPoint(Point p, Double value) {
+			this.p = p;
+			this.value = value;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			WeightedPoint other = (WeightedPoint) obj;
+			return other.p.equals(p);
+		}
+
+		public int compareTo(WeightedPoint arg0) {
+			return value.compareTo(arg0.value);
+		}
+		
+		@Override
+		public String toString() {
+			return value.toString();
+		}
+
+	}
+
+//	private static void deleteMin(HashMap<Double, Point> map) {
+//		double min = map.keySet().iterator().next();
+//		for (Double d : map.keySet())
+//			if (d < min)
+//				min = d;
+//		map.remove(min);
+//	}
+
 }

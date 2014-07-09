@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -111,30 +112,67 @@ public interface Image {
 	public void saltAndPepperNoise(double percentage, double po, double p1);
 
 	public Color applyMeanFilter(int pixelX, int pixelY, int rectangleSide);
+
 	public Color applyMedianFilter(int pixelX, int pixelY, int rectangleSide);
-	public Color applyGaussianFilter(int pixelX, int pixelY, int rectangleSide, double sigma);
+
+	public Color applyGaussianFilter(int pixelX, int pixelY, int rectangleSide,
+			double sigma);
+
 	public void applyAnisotropicDiffusion(BorderDetector bd);
+
 	public void applyMask(Mask mask);
-	public void applyMasksAndSynth(SynthesisFunction func, Mask mask1, Mask mask2);
+
+	public void applyMasksAndSynth(SynthesisFunction func, Mask mask1,
+			Mask mask2);
+
 	public void synthesize(SynthesisFunction func, Image... imgs);
+
 	public void contrast(double r1, double r2, double y1, double y2);
+
 	public Set<Point> getWhites();
+
 	public Set<Point> getBlacks();
+
 	public double getGlobalThreshold();
+
 	public int[][] getDerivationDirections();
+
 	public void borderWithNoMaximumsDeletion(int[][] derivationDirections);
+
 	public void markZeroCrossers();
+
 	public void markCrossersWithThreshold(int threshold);
+
 	public void histeresisThreshold(double t1, double t2);
+
 	public void applySusan(Mask mask, double threshold);
-	public HashMap<Double, Double> applyHough(int granularityTita, int granularityRo, double threshold, int totalLines);
+
+	public HashMap<Double, Double> applyHough(int granularityTita,
+			int granularityRo, double threshold, int totalLines);
+
 	public void drawHoughLines(HashMap<Double, Double> roTitas, double threshold);
-	public Set<Point3D> applyCircleHough(int granularityA, int granularityB, int granularityR,
-			double threshold, int totalLines);
+
+	public Set<Point3D> applyCircleHough(int granularityA, int granularityB,
+			int granularityR, double threshold, int totalLines);
+
 	public void drawHoughCircles(Set<Point3D> abr, double threshold);
+
 	public double otsuThreshold();
 
 	boolean tracking(Tracker tita);
-	void applyHarrisCornerDetector(int masksize, double sigma, double r, double k);
+
+//	void applyHarrisCornerDetector(int masksize, double sigma, double r,
+//			double k);
+
 	void detectFeatures(List<Feature> features);
-	}
+
+	public Image getHarrisCIM(int maskSize, double sigma, double k);
+
+	public void applyChannelThreshold(double value);
+
+	// public List<Point> getHarrisMaxPoints(int maskSize, double sigma, double
+	// k,
+	// int totalResults);
+	public List<Object> getHarrisMaxPoints(int maskSize, double sigma,
+			double k, int totalResults);
+}
